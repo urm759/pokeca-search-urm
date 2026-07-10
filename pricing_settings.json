@@ -1,0 +1,8 @@
+{
+  "fee13k": 13000,
+  "fee5k": 5000,
+  "deliveryMonths13k": 2,
+  "deliveryMonths5k": 5,
+  "targetProfitRate13k": 20,
+  "targetProfitRate5k": 15
+}

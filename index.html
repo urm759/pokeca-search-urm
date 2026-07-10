@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PSA仕入れ検索</title>
-  <meta name="theme-color" content="#f4f6f8" />
+  <meta name="theme-color" content="#eef2f6" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -19,8 +19,42 @@
       <div class="stats" id="stats" aria-label="集計"></div>
     </header>
 
+    <section class="settings-panel" aria-label="鑑定費設定">
+      <div class="settings-title">鑑定費・判定設定</div>
+      <div class="settings-grid">
+        <label class="setting-field">
+          <span>13k鑑定費</span>
+          <input id="fee13k" type="number" min="0" step="100" />
+        </label>
+        <label class="setting-field">
+          <span>13k納期(月)</span>
+          <input id="months13k" type="number" min="1" step="1" />
+        </label>
+        <label class="setting-field">
+          <span>13k目標利益率</span>
+          <input id="target13k" type="number" min="0" step="1" />
+        </label>
+        <label class="setting-field">
+          <span>5k鑑定費</span>
+          <input id="fee5k" type="number" min="0" step="100" />
+        </label>
+        <label class="setting-field">
+          <span>5k納期(月)</span>
+          <input id="months5k" type="number" min="1" step="1" />
+        </label>
+        <label class="setting-field">
+          <span>5k目標利益率</span>
+          <input id="target5k" type="number" min="0" step="1" />
+        </label>
+      </div>
+      <div class="settings-actions">
+        <button id="applySettings" type="button">反映</button>
+        <button id="resetSettings" type="button" class="ghost">初期化</button>
+      </div>
+    </section>
+
     <section class="controls" aria-label="検索条件">
-      <input id="search" type="search" placeholder="カード名・収録パックで検索" />
+      <input id="search" type="search" placeholder="カード名・パック名で検索" />
       <select id="evalFilter" aria-label="総合評価">
         <option value="">総合評価 すべて</option>
         <option value="買い">買い</option>
@@ -30,9 +64,9 @@
       <select id="judgeFilter" aria-label="13k判断">
         <option value="">13k判断 すべて</option>
         <option value="縦積み可">縦積み可</option>
-        <option value="少数なら買い">少数なら買い</option>
-        <option value="安ければ少数">安ければ少数</option>
-        <option value="かなり安ければ">かなり安ければ</option>
+        <option value="少数候補">少数候補</option>
+        <option value="安ければ">安ければ</option>
+        <option value="指値なら">指値なら</option>
         <option value="見送り">見送り</option>
       </select>
       <select id="sortFilter" aria-label="並び順">
@@ -44,23 +78,23 @@
         <option value="">収録パック すべて</option>
       </select>
       <label class="toggle">
-        <input id="onlyCircle" type="checkbox" />
-        <span>〇のみ</span>
+        <input id="onlyBuyable" type="checkbox" />
+        <span>仕入れ可のみ</span>
       </label>
     </section>
 
     <section class="quick" aria-label="クイック検索">
-      <button data-term="ピカチュウ">ピカチュウ</button>
-      <button data-term="リザードン">リザードン</button>
-      <button data-term="ミュウ">ミュウ</button>
-      <button data-term="メガ">メガ</button>
-      <button data-term="ブラッキー">ブラッキー</button>
+      <button type="button" data-term="ピカチュウ">ピカチュウ</button>
+      <button type="button" data-term="リザードン">リザードン</button>
+      <button type="button" data-term="ミュウ">ミュウ</button>
+      <button type="button" data-term="メガ">メガ</button>
+      <button type="button" data-term="ブリジュラス">ブリジュラス</button>
     </section>
 
     <section class="results">
       <div class="results-head">
         <div class="result-count" id="resultCount"></div>
-        <div class="hint">仕入れ候補は上から順に見ればOK。店頭では「仕入れ可」の色と価格だけ先に見てください。</div>
+        <div class="hint">設定を変えると、一覧の利益率・上限・おすすめ仕入れ額がその場で変わります。</div>
       </div>
       <div id="list" class="list"></div>
     </section>

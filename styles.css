@@ -15,7 +15,13 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 body { padding: 18px; }
 
 .app {
@@ -32,13 +38,13 @@ body { padding: 18px; }
 }
 
 .hero-copy {
-  max-width: 700px;
+  max-width: 760px;
 }
 
 .eyebrow {
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: .02em;
+  letter-spacing: 0;
   color: var(--accent);
   margin-bottom: 6px;
 }
@@ -89,6 +95,7 @@ h1 {
   margin-top: 3px;
 }
 
+.settings-panel,
 .controls,
 .quick,
 .results-head,
@@ -96,28 +103,44 @@ h1 {
   margin-bottom: 12px;
 }
 
-.controls {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  display: grid;
-  grid-template-columns: minmax(240px, 1.7fr) repeat(4, minmax(145px, 1fr)) auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  margin-inline: -10px;
-  background: rgba(238, 242, 246, 0.9);
-  backdrop-filter: blur(10px);
+.settings-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow);
 }
 
-input,
-select,
-button {
+.settings-title {
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.setting-field {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.setting-field input,
+.controls input,
+.controls select,
+.settings-actions button,
+.quick button {
   font: inherit;
 }
 
-input,
-select {
+.setting-field input,
+.controls input,
+.controls select {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--border);
@@ -128,10 +151,50 @@ select {
   box-shadow: var(--shadow-soft);
 }
 
-input:focus,
-select:focus {
+.setting-field input:focus,
+.controls input:focus,
+.controls select:focus {
   outline: 2px solid rgba(36, 89, 212, 0.18);
   border-color: #97b1ef;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.settings-actions button,
+.quick button {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+}
+
+.settings-actions button:hover,
+.quick button:hover {
+  border-color: #bac7db;
+}
+
+.settings-actions .ghost {
+  background: var(--panel-soft);
+}
+
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(240px, 1.7fr) repeat(3, minmax(145px, 1fr)) minmax(180px, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  margin-inline: -10px;
+  background: rgba(238, 242, 246, 0.92);
+  backdrop-filter: blur(10px);
 }
 
 .toggle {
@@ -156,17 +219,6 @@ select:focus {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-}
-.quick button {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 999px;
-  padding: 8px 12px;
-  cursor: pointer;
-  box-shadow: var(--shadow-soft);
-}
-.quick button:hover {
-  border-color: #bac7db;
 }
 
 .results-head {
@@ -218,9 +270,7 @@ select:focus {
   min-width: 0;
 }
 
-.name-copy {
-  min-width: 0;
-}
+.name-copy { min-width: 0; }
 
 .card-art {
   width: 92px;
@@ -268,6 +318,7 @@ select:focus {
   line-height: 1.1;
   font-weight: 900;
 }
+
 .price-value.accent {
   color: var(--accent);
 }
@@ -279,10 +330,12 @@ select:focus {
   padding: 4px 8px;
   border-radius: 999px;
 }
+
 .price-state.ok {
   background: rgba(31, 122, 63, 0.12);
   color: var(--good);
 }
+
 .price-state.ng {
   background: rgba(161, 31, 45, 0.12);
   color: var(--bad);
@@ -301,11 +354,13 @@ select:focus {
   border-radius: 10px;
   padding: 10px;
 }
+
 .kv .k {
   display: block;
   font-size: 11px;
   color: var(--muted);
 }
+
 .kv .v {
   display: block;
   margin-top: 4px;
@@ -338,14 +393,13 @@ select:focus {
   font-weight: 800;
   white-space: nowrap;
 }
+
 .b-good { background: rgba(31, 122, 63, 0.12); color: var(--good); }
 .b-warn { background: rgba(163, 107, 21, 0.12); color: var(--warn); }
 .b-bad { background: rgba(161, 31, 45, 0.12); color: var(--bad); }
 .b-info { background: rgba(36, 89, 212, 0.12); color: var(--accent); }
 
-.muted {
-  color: var(--muted);
-}
+.muted { color: var(--muted); }
 
 .link {
   color: var(--accent);
@@ -354,6 +408,9 @@ select:focus {
 }
 
 @media (max-width: 1080px) {
+  .settings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .controls {
     grid-template-columns: 1fr 1fr;
   }
@@ -389,6 +446,9 @@ select:focus {
   }
   .stats {
     justify-content: start;
+  }
+  .settings-grid {
+    grid-template-columns: 1fr;
   }
   .controls {
     grid-template-columns: 1fr;
