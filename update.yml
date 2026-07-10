@@ -1,0 +1,49 @@
+name: Update Pokeca Data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 18 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-pokeca-data
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh latest data
+        run: node ./refresh_latest_data.js
+
+      - name: Rebuild shop price version
+        shell: pwsh
+        run: ./rebuild_shop_price_version_v2.ps1
+
+      - name: Rebuild site data
+        run: node ./build_search_site.js
+
+      - name: Commit and push if changed
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "Update Pokeca data"
+            git push origin "HEAD:${{ github.ref_name }}"
+          } else {
+            Write-Host "No changes to commit."
+          }

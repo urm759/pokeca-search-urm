@@ -1,3 +1,11 @@
+window.POKECA_CONFIG = {
+  "fee13k": 13000,
+  "fee5k": 5000,
+  "deliveryMonths13k": 2,
+  "deliveryMonths5k": 5,
+  "targetProfitRate13k": 20,
+  "targetProfitRate5k": 15
+};
 window.POKECA_DATA = [
   {
     "カード": "〇メガリザードンXex [M2 116/080]",
@@ -24,7 +32,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重い",
     "URL": "https://pokeca-chart.com/gr/m2-116-080/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2-116-080-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2-116-080-medium.webp",
+    "13k仕入れ上限": "230700",
+    "5k仕入れ上限": "249300"
   },
   {
     "カード": "〇ピカチュウ [001/S-P]",
@@ -51,7 +61,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/001-s-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/001-s-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/001-s-p-medium.webp",
+    "13k仕入れ上限": "69100",
+    "5k仕入れ上限": "80700"
   },
   {
     "カード": "〇ビクティニ [288/SV-P]",
@@ -78,7 +90,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/288-sv-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/288-sv-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/288-sv-p-medium.webp",
+    "13k仕入れ上限": "115500",
+    "5k仕入れ上限": "129100"
   },
   {
     "カード": "〇レッドのピカチュウ [270/SM-P]",
@@ -105,7 +119,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/270-sm-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/270-sm-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/270-sm-p-medium.webp",
+    "13k仕入れ上限": "82400",
+    "5k仕入れ上限": "94500"
   },
   {
     "カード": "〇メガサーナイトex [M1S 092/063]",
@@ -132,7 +148,9 @@ window.POKECA_DATA = [
     "総合点": "10",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m1s-092-063/",
-    "画像URL": "https://api.pokeca-chart.com/img/m1s-092-063-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m1s-092-063-medium.webp",
+    "13k仕入れ上限": "56100",
+    "5k仕入れ上限": "67100"
   },
   {
     "カード": "〇メガルカリオex [M1L 092/063]",
@@ -159,7 +177,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/m1l-092-063/",
-    "画像URL": "https://api.pokeca-chart.com/img/m1l-092-063-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m1l-092-063-medium.webp",
+    "13k仕入れ上限": "62000",
+    "5k仕入れ上限": "73200"
   },
   {
     "カード": "〇ミュウ [S8a 030/028]",
@@ -186,7 +206,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s8a-030-028/",
-    "画像URL": "https://api.pokeca-chart.com/img/s8a-030-028-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s8a-030-028-medium.webp",
+    "13k仕入れ上限": "33800",
+    "5k仕入れ上限": "43800"
   },
   {
     "カード": "〇ピカチュウ(マスターボールミラー) [SV2a 025/165]",
@@ -213,7 +235,9 @@ window.POKECA_DATA = [
     "総合点": "10",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv2a-025-165/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv2a-025-165-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv2a-025-165-medium.webp",
+    "13k仕入れ上限": "50200",
+    "5k仕入れ上限": "61000"
   },
   {
     "カード": "ピカチュウVMAX [S4 114/100]",
@@ -240,7 +264,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s4-114-100/",
-    "画像URL": "https://api.pokeca-chart.com/img/s4-114-100-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s4-114-100-medium.webp",
+    "13k仕入れ上限": "38100",
+    "5k仕入れ上限": "48300"
   },
   {
     "カード": "〇リーリエの決心 [M1L 091/063]",
@@ -267,7 +293,9 @@ window.POKECA_DATA = [
     "総合点": "10",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m1l-091-063/",
-    "画像URL": "https://api.pokeca-chart.com/img/m1l-091-063-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m1l-091-063-medium.webp",
+    "13k仕入れ上限": "26800",
+    "5k仕入れ上限": "36500"
   },
   {
     "カード": "〇ピカチュウ [S12a 205/172]",
@@ -294,7 +322,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s12a-205-172/",
-    "画像URL": "https://api.pokeca-chart.com/img/s12a-205-172-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s12a-205-172-medium.webp",
+    "13k仕入れ上限": "41600",
+    "5k仕入れ上限": "52000"
   },
   {
     "カード": "〇ミュウex [SV4a 347/190]",
@@ -321,7 +351,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv4a-347-190/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv4a-347-190-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv4a-347-190-medium.webp",
+    "13k仕入れ上限": "60700",
+    "5k仕入れ上限": "71900"
   },
   {
     "カード": "ゼクロムex [sv11B 174/086]",
@@ -348,7 +380,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv11b-174-086/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv11b-174-086-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv11b-174-086-medium.webp",
+    "13k仕入れ上限": "49800",
+    "5k仕入れ上限": "60500"
   },
   {
     "カード": "メガリザードンXex [M2 110/080]",
@@ -375,7 +409,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "重い",
     "URL": "https://pokeca-chart.com/gr/m2-110-080/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2-110-080-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2-110-080-medium.webp",
+    "13k仕入れ上限": "85600",
+    "5k仕入れ上限": "97900"
   },
   {
     "カード": "トウホクのピカチュウ [260/SV-P]",
@@ -402,7 +438,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/260-sv-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/260-sv-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/260-sv-p-medium.webp",
+    "13k仕入れ上限": "10500",
+    "5k仕入れ上限": "19500"
   },
   {
     "カード": "〇メイのはげまし [M3 115/080]",
@@ -429,7 +467,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m3-115-080/",
-    "画像URL": "https://api.pokeca-chart.com/img/m3-115-080-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m3-115-080-medium.webp",
+    "13k仕入れ上限": "12600",
+    "5k仕入れ上限": "21700"
   },
   {
     "カード": "〇メガゲンガーex [M2a 240/193]",
@@ -456,7 +496,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/m2a-240-193/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2a-240-193-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-240-193-medium.webp",
+    "13k仕入れ上限": "45600",
+    "5k仕入れ上限": "56100"
   },
   {
     "カード": "〇ピカチュウex [M2a 234/193]",
@@ -483,7 +525,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m2a-234-193/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2a-234-193-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-234-193-medium.webp",
+    "13k仕入れ上限": "33400",
+    "5k仕入れ上限": "43400"
   },
   {
     "カード": "〇リザードンex [SV3 134/108]",
@@ -510,7 +554,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/sv3-134-108/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv3-134-108-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv3-134-108-medium.webp",
+    "13k仕入れ上限": "33000",
+    "5k仕入れ上限": "43000"
   },
   {
     "カード": "リザードン [S8a-P 001/025]",
@@ -537,7 +583,9 @@ window.POKECA_DATA = [
     "総合点": "6",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/s8a-p-001-025/",
-    "画像URL": "https://api.pokeca-chart.com/img/s8a-p-001-025-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s8a-p-001-025-medium.webp",
+    "13k仕入れ上限": "59900",
+    "5k仕入れ上限": "71100"
   },
   {
     "カード": "〇ピカチュウex [sv8 132/106]",
@@ -564,7 +612,9 @@ window.POKECA_DATA = [
     "総合点": "6",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv8-132-106/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv8-132-106-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv8-132-106-medium.webp",
+    "13k仕入れ上限": "58800",
+    "5k仕入れ上限": "69900"
   },
   {
     "カード": "ブラッキーex [sv8a 217/187]",
@@ -591,7 +641,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv8a-217-187/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv8a-217-187-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv8a-217-187-medium.webp",
+    "13k仕入れ上限": "48400",
+    "5k仕入れ上限": "59000"
   },
   {
     "カード": "ブラッキーV [S6a 085/069]",
@@ -618,7 +670,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/s6a-085-069/",
-    "画像URL": "https://api.pokeca-chart.com/img/s6a-085-069-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s6a-085-069-medium.webp",
+    "13k仕入れ上限": "43100",
+    "5k仕入れ上限": "53500"
   },
   {
     "カード": "バンギラスV [S5I 077/070]",
@@ -645,7 +699,9 @@ window.POKECA_DATA = [
     "総合点": "5",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s5i-077-070/",
-    "画像URL": "https://api.pokeca-chart.com/img/s5i-077-070-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s5i-077-070-medium.webp",
+    "13k仕入れ上限": "30700",
+    "5k仕入れ上限": "40600"
   },
   {
     "カード": "リザードンex [SV2a 201/165]",
@@ -672,7 +728,9 @@ window.POKECA_DATA = [
     "総合点": "5",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv2a-201-165/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv2a-201-165-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv2a-201-165-medium.webp",
+    "13k仕入れ上限": "56400",
+    "5k仕入れ上限": "67400"
   },
   {
     "カード": "リザードンex [SV4a 349/190]",
@@ -699,7 +757,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/sv4a-349-190/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv4a-349-190-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv4a-349-190-medium.webp",
+    "13k仕入れ上限": "27600",
+    "5k仕入れ上限": "37400"
   },
   {
     "カード": "メガカイリューex [M2a 246/193]",
@@ -726,7 +786,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m2a-246-193/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2a-246-193-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-246-193-medium.webp",
+    "13k仕入れ上限": "19900",
+    "5k仕入れ上限": "29300"
   },
   {
     "カード": "〇ピカチュウVMAX [123/S-P]",
@@ -753,7 +815,9 @@ window.POKECA_DATA = [
     "総合点": "6",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/123-s-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/123-s-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/123-s-p-medium.webp",
+    "13k仕入れ上限": "21500",
+    "5k仕入れ上限": "31000"
   },
   {
     "カード": "リーリエのピッピex [sv9 126/100]",
@@ -780,7 +844,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/sv9-126-100/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv9-126-100-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv9-126-100-medium.webp",
+    "13k仕入れ上限": "12400",
+    "5k仕入れ上限": "21500"
   },
   {
     "カード": "メガゲッコウガex [M4 114/083]",
@@ -807,7 +873,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m4-114-083/",
-    "画像URL": "https://api.pokeca-chart.com/img/m4-114-083-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m4-114-083-medium.webp",
+    "13k仕入れ上限": "23100",
+    "5k仕入れ上限": "32600"
   },
   {
     "カード": "フクオカのピカチュウ [289/SV-P]",
@@ -834,7 +902,9 @@ window.POKECA_DATA = [
     "総合点": "7",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/289-sv-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/289-sv-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/289-sv-p-medium.webp",
+    "13k仕入れ上限": "10400",
+    "5k仕入れ上限": "19400"
   },
   {
     "カード": "〇ピカチュウ [208/S-P]",
@@ -861,7 +931,9 @@ window.POKECA_DATA = [
     "総合点": "4",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/208-s-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/208-s-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/208-s-p-medium.webp",
+    "13k仕入れ上限": "14800",
+    "5k仕入れ上限": "24000"
   },
   {
     "カード": "ガラルファイヤーV [S5a 078/070]",
@@ -888,7 +960,9 @@ window.POKECA_DATA = [
     "総合点": "3",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/s5a-078-070/",
-    "画像URL": "https://api.pokeca-chart.com/img/s5a-078-070-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s5a-078-070-medium.webp",
+    "13k仕入れ上限": "31300",
+    "5k仕入れ上限": "41200"
   },
   {
     "カード": "ミュウV [s8 106/100]",
@@ -915,7 +989,9 @@ window.POKECA_DATA = [
     "総合点": "4",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s8-106-100/",
-    "画像URL": "https://api.pokeca-chart.com/img/s8-106-100-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s8-106-100-medium.webp",
+    "13k仕入れ上限": "15200",
+    "5k仕入れ上限": "24400"
   },
   {
     "カード": "ピカチュウex [WCS23 001/030]",
@@ -942,7 +1018,9 @@ window.POKECA_DATA = [
     "総合点": "3",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/wcs23-001-030/",
-    "画像URL": "https://api.pokeca-chart.com/img/wcs23-001-030-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/wcs23-001-030-medium.webp",
+    "13k仕入れ上限": "42200",
+    "5k仕入れ上限": "52600"
   },
   {
     "カード": "マリィ [140/S-P]",
@@ -969,7 +1047,9 @@ window.POKECA_DATA = [
     "総合点": "4",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/140-s-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/140-s-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/140-s-p-medium.webp",
+    "13k仕入れ上限": "3600",
+    "5k仕入れ上限": "12300"
   },
   {
     "カード": "〇メガダークライex [M5 118/081]",
@@ -996,7 +1076,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/m5-118-081/",
-    "画像URL": "https://api.pokeca-chart.com/img/m5-118-081-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m5-118-081-medium.webp",
+    "13k仕入れ上限": "103600",
+    "5k仕入れ上限": "116700"
   },
   {
     "カード": "〇メガゲッコウガex [M4 120/083]",
@@ -1023,7 +1105,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/m4-120-083/",
-    "画像URL": "https://api.pokeca-chart.com/img/m4-120-083-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m4-120-083-medium.webp",
+    "13k仕入れ上限": "84000",
+    "5k仕入れ上限": "96300"
   },
   {
     "カード": "〇メガダークライex [M5 114/081]",
@@ -1050,7 +1134,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m5-114-081/",
-    "画像URL": "https://api.pokeca-chart.com/img/m5-114-081-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m5-114-081-medium.webp",
+    "13k仕入れ上限": "40700",
+    "5k仕入れ上限": "51000"
   },
   {
     "カード": "〇リーリエのピッピex [MC 765/742]",
@@ -1077,7 +1163,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/mc-765-742/",
-    "画像URL": "https://api.pokeca-chart.com/img/mc-765-742-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/mc-765-742-medium.webp",
+    "13k仕入れ上限": "71400",
+    "5k仕入れ上限": "83000"
   },
   {
     "カード": "〇_のピカチュウ [S8a 007/025]",
@@ -1104,7 +1192,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/s8a-007-025/",
-    "画像URL": "https://api.pokeca-chart.com/img/s8a-007-025-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s8a-007-025-medium.webp",
+    "13k仕入れ上限": "59600",
+    "5k仕入れ上限": "70700"
   },
   {
     "カード": "〇メガカイリューex [M2a 250/193]",
@@ -1131,7 +1221,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m2a-250-193/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2a-250-193-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-250-193-medium.webp",
+    "13k仕入れ上限": "32700",
+    "5k仕入れ上限": "42700"
   },
   {
     "カード": "〇ゼイユ [SV6 130/101]",
@@ -1158,7 +1250,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/sv6-130-101/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv6-130-101-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv6-130-101-medium.webp",
+    "13k仕入れ上限": "19400",
+    "5k仕入れ上限": "28800"
   },
   {
     "カード": "〇ミュウex [SV2a 205/165]",
@@ -1185,7 +1279,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/sv2a-205-165/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv2a-205-165-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv2a-205-165-medium.webp",
+    "13k仕入れ上限": "36400",
+    "5k仕入れ上限": "46600"
   },
   {
     "カード": "〇ヒロシマのピカチュウ [261/SV-P]",
@@ -1212,7 +1308,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/261-sv-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/261-sv-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/261-sv-p-medium.webp",
+    "13k仕入れ上限": "18700",
+    "5k仕入れ上限": "28100"
   },
   {
     "カード": "〇名探偵ピカチュウ [098/SV-P]",
@@ -1239,7 +1337,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/098-sv-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/098-sv-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/098-sv-p-medium.webp",
+    "13k仕入れ上限": "24000",
+    "5k仕入れ上限": "33600"
   },
   {
     "カード": "リザードンV [s9 103/100]",
@@ -1266,7 +1366,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s9-103-100/",
-    "画像URL": "https://api.pokeca-chart.com/img/s9-103-100-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s9-103-100-medium.webp",
+    "13k仕入れ上限": "20700",
+    "5k仕入れ上限": "30100"
   },
   {
     "カード": "レシラムex [sv11W 174/086]",
@@ -1293,7 +1395,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv11w-174-086/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv11w-174-086-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv11w-174-086-medium.webp",
+    "13k仕入れ上限": "52500",
+    "5k仕入れ上限": "63400"
   },
   {
     "カード": "〇ピカチュウ [323/S-P]",
@@ -1320,7 +1424,9 @@ window.POKECA_DATA = [
     "総合点": "9",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/323-s-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/323-s-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/323-s-p-medium.webp",
+    "13k仕入れ上限": "54000",
+    "5k仕入れ上限": "64900"
   },
   {
     "カード": "ロケット団のミュウツーex [sv10 125/098]",
@@ -1347,7 +1453,9 @@ window.POKECA_DATA = [
     "総合点": "8",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/sv10-125-098/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv10-125-098-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv10-125-098-medium.webp",
+    "13k仕入れ上限": "51900",
+    "5k仕入れ上限": "62700"
   },
   {
     "カード": "ニンフィアV [S6a 083/069]",
@@ -1374,7 +1482,9 @@ window.POKECA_DATA = [
     "総合点": "2",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s6a-083-069/",
-    "画像URL": "https://api.pokeca-chart.com/img/s6a-083-069-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s6a-083-069-medium.webp",
+    "13k仕入れ上限": "12300",
+    "5k仕入れ上限": "21400"
   },
   {
     "カード": "ロケット団のミュウツーex [M2a 237/193]",
@@ -1401,7 +1511,9 @@ window.POKECA_DATA = [
     "総合点": "5",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/m2a-237-193/",
-    "画像URL": "https://api.pokeca-chart.com/img/m2a-237-193-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-237-193-medium.webp",
+    "13k仕入れ上限": "9800",
+    "5k仕入れ上限": "18700"
   },
   {
     "カード": "〇ピッピ [381/S-P]",
@@ -1428,7 +1540,9 @@ window.POKECA_DATA = [
     "総合点": "2",
     "資金ロック": "重め",
     "URL": "https://pokeca-chart.com/gr/381-s-p/",
-    "画像URL": "https://api.pokeca-chart.com/img/381-s-p-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/381-s-p-medium.webp",
+    "13k仕入れ上限": "37300",
+    "5k仕入れ上限": "47500"
   },
   {
     "カード": "ルギアV [s12 110/098]",
@@ -1455,7 +1569,9 @@ window.POKECA_DATA = [
     "総合点": "3",
     "資金ロック": "重い",
     "URL": "https://pokeca-chart.com/gr/s12-110-098/",
-    "画像URL": "https://api.pokeca-chart.com/img/s12-110-098-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s12-110-098-medium.webp",
+    "13k仕入れ上限": "76300",
+    "5k仕入れ上限": "88200"
   },
   {
     "カード": "エーフィV [S6a 081/069]",
@@ -1482,7 +1598,9 @@ window.POKECA_DATA = [
     "総合点": "2",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s6a-081-069/",
-    "画像URL": "https://api.pokeca-chart.com/img/s6a-081-069-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s6a-081-069-medium.webp",
+    "13k仕入れ上限": "13700",
+    "5k仕入れ上限": "22900"
   },
   {
     "カード": "ゲッコウガex [SV5a 090/066]",
@@ -1509,7 +1627,9 @@ window.POKECA_DATA = [
     "総合点": "2",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/sv5a-090-066/",
-    "画像URL": "https://api.pokeca-chart.com/img/sv5a-090-066-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/sv5a-090-066-medium.webp",
+    "13k仕入れ上限": "22800",
+    "5k仕入れ上限": "32300"
   },
   {
     "カード": "リザードンVSTAR [S12a 212/172]",
@@ -1536,7 +1656,9 @@ window.POKECA_DATA = [
     "総合点": "3",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s12a-212-172/",
-    "画像URL": "https://api.pokeca-chart.com/img/s12a-212-172-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s12a-212-172-medium.webp",
+    "13k仕入れ上限": "4200",
+    "5k仕入れ上限": "12900"
   },
   {
     "カード": "ミュウツーVSTAR [S12a 221/172]",
@@ -1563,6 +1685,8 @@ window.POKECA_DATA = [
     "総合点": "3",
     "資金ロック": "普通",
     "URL": "https://pokeca-chart.com/gr/s12a-221-172/",
-    "画像URL": "https://api.pokeca-chart.com/img/s12a-221-172-medium.webp"
+    "画像URL": "https://api.pokeca-chart.com/img/s12a-221-172-medium.webp",
+    "13k仕入れ上限": "5800",
+    "5k仕入れ上限": "14600"
   }
 ];

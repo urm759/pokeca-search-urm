@@ -5,12 +5,22 @@
     search: document.getElementById('search'),
     evalFilter: document.getElementById('evalFilter'),
     judgeFilter: document.getElementById('judgeFilter'),
+    sortFilter: document.getElementById('sortFilter'),
     packFilter: document.getElementById('packFilter'),
     onlyCircle: document.getElementById('onlyCircle'),
     list: document.getElementById('list'),
     count: document.getElementById('resultCount'),
     stats: document.getElementById('stats'),
+    settingsLine: document.getElementById('settingsLine'),
   };
+
+  const config = window.POKECA_CONFIG || {};
+  const fee13k = num(config.fee13k) || 13000;
+  const fee5k = num(config.fee5k) || 5000;
+  const months13k = num(config.deliveryMonths13k) || 2;
+  const months5k = num(config.deliveryMonths5k) || 5;
+  const target13k = num(config.targetProfitRate13k) || 20;
+  const target5k = num(config.targetProfitRate5k) || 15;
 
   const labels = {
     '買い': 'b-good',
@@ -57,6 +67,12 @@
     return `${n.toFixed(1).replace(/\.0$/, '')}%`;
   }
 
+  function yenCompact(v) {
+    if (v === null || v === undefined || v === '') return '-';
+    const n = num(v);
+    return `${nf.format(Math.round(n))}円`;
+  }
+
   function badge(text, cls) {
     return `<span class="badge ${cls}">${text}</span>`;
   }
@@ -94,6 +110,16 @@
   }
 
   function sortRows(a, b) {
+    const sortMode = els.sortFilter.value || 'summary';
+    if (sortMode === 'roi13') {
+      const av = num(a['13kROI']);
+      const bv = num(b['13kROI']);
+      if (av !== bv) return bv - av;
+    } else if (sortMode === 'roi5') {
+      const av = num(a['5kROI']);
+      const bv = num(b['5kROI']);
+      if (av !== bv) return bv - av;
+    }
     const ev = { '買い': 0, '条件付き': 1, '見送り': 2 };
     const av = ev[a['総合評価']] ?? 9;
     const bv = ev[b['総合評価']] ?? 9;
@@ -114,11 +140,17 @@
     ['見送り', rows.filter((r) => r['総合評価'] === '見送り').length],
   ].map(([k, v]) => `<div class="stat"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
 
+  if (els.settingsLine) {
+    els.settingsLine.textContent = `設定: 13k ${nf.format(fee13k)}円 / ${months13k}か月 / 目標利益率 ${target13k}%  |  5k ${nf.format(fee5k)}円 / ${months5k}か月 / 目標利益率 ${target5k}%`;
+  }
+
   function rowHtml(row) {
     const buyPrice = num(row['おすすめの仕入れ値']);
     const shop = num(row['ショップ価格']);
     const link = row['URL'] || '#';
     const imageUrl = row['画像URL'] || '';
+    const cap13k = row['13k仕入れ上限'];
+    const cap5k = row['5k仕入れ上限'];
     const purchasable = buyPrice > 0 && shop > 0 && shop <= buyPrice;
     const rowClass = [
       'row',
@@ -155,6 +187,8 @@
           <div class="kv"><span class="k">PSA10売値</span><span class="v">${yen(row['PSA10売値'])}</span></div>
           <div class="kv"><span class="k">PSA10差額</span><span class="v">${yen(row['PSA10差額'])}</span></div>
           <div class="kv"><span class="k">利益率</span><span class="v">${pct(row['利益率'])}</span></div>
+          <div class="kv"><span class="k">13k仕入れ上限</span><span class="v">${yenCompact(cap13k)}</span></div>
+          <div class="kv"><span class="k">5k仕入れ上限</span><span class="v">${yenCompact(cap5k)}</span></div>
           <div class="kv"><span class="k">13kROI</span><span class="v">${pct(row['13kROI'])}</span></div>
           <div class="kv"><span class="k">5kROI</span><span class="v">${pct(row['5kROI'])}</span></div>
           <div class="kv"><span class="k">流動性 / 資金</span><span class="v">${row['流動性'] || '-'} / ${row['資金ロック'] || '-'}</span></div>
@@ -182,6 +216,7 @@
     els.search.addEventListener(evt, render);
     els.evalFilter.addEventListener(evt, render);
     els.judgeFilter.addEventListener(evt, render);
+    els.sortFilter.addEventListener(evt, render);
     els.packFilter.addEventListener(evt, render);
     els.onlyCircle.addEventListener(evt, render);
   });

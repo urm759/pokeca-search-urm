@@ -14,6 +14,7 @@
         <div class="eyebrow">店頭チェック用</div>
         <h1>PSA仕入れ検索</h1>
         <p class="lead">店で素早く判断できるように、仕入れ可否・価格・流動性を大きく見せます。</p>
+        <p class="lead settings-line" id="settingsLine"></p>
       </div>
       <div class="stats" id="stats" aria-label="集計"></div>
     </header>
@@ -33,6 +34,11 @@
         <option value="安ければ少数">安ければ少数</option>
         <option value="かなり安ければ">かなり安ければ</option>
         <option value="見送り">見送り</option>
+      </select>
+      <select id="sortFilter" aria-label="並び順">
+        <option value="summary">並び順: 総合評価</option>
+        <option value="roi13">並び順: 13k ROI</option>
+        <option value="roi5">並び順: 5k ROI</option>
       </select>
       <select id="packFilter" aria-label="収録パック">
         <option value="">収録パック すべて</option>
