@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PSA仕入れ検索</title>
   <meta name="theme-color" content="#eef2f6" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('pokeca-theme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.dataset.theme = saved;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', saved === 'dark' ? '#101522' : '#eef2f6');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -16,42 +28,11 @@
         <p class="lead">店で素早く判断できるように、仕入れ可否・価格・流動性を大きく見せます。</p>
         <p class="lead settings-line" id="settingsLine"></p>
       </div>
-      <div class="stats" id="stats" aria-label="集計"></div>
+      <div class="topbar-actions">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="テーマ切り替え"></button>
+        <div class="stats" id="stats" aria-label="集計"></div>
+      </div>
     </header>
-
-    <section class="settings-panel" aria-label="鑑定費設定">
-      <div class="settings-title">鑑定費・判定設定</div>
-      <div class="settings-grid">
-        <label class="setting-field">
-          <span>13k鑑定費</span>
-          <input id="fee13k" type="number" min="0" step="100" />
-        </label>
-        <label class="setting-field">
-          <span>13k納期(月)</span>
-          <input id="months13k" type="number" min="1" step="1" />
-        </label>
-        <label class="setting-field">
-          <span>13k目標利益率</span>
-          <input id="target13k" type="number" min="0" step="1" />
-        </label>
-        <label class="setting-field">
-          <span>5k鑑定費</span>
-          <input id="fee5k" type="number" min="0" step="100" />
-        </label>
-        <label class="setting-field">
-          <span>5k納期(月)</span>
-          <input id="months5k" type="number" min="1" step="1" />
-        </label>
-        <label class="setting-field">
-          <span>5k目標利益率</span>
-          <input id="target5k" type="number" min="0" step="1" />
-        </label>
-      </div>
-      <div class="settings-actions">
-        <button id="applySettings" type="button">反映</button>
-        <button id="resetSettings" type="button" class="ghost">初期化</button>
-      </div>
-    </section>
 
     <section class="controls" aria-label="検索条件">
       <input id="search" type="search" placeholder="カード名・パック名で検索" />
@@ -94,7 +75,7 @@
     <section class="results">
       <div class="results-head">
         <div class="result-count" id="resultCount"></div>
-        <div class="hint">設定を変えると、一覧の利益率・上限・おすすめ仕入れ額がその場で変わります。</div>
+        <div class="hint">検索と絞り込みで、店頭での判断をしやすくしています。</div>
       </div>
       <div id="list" class="list"></div>
     </section>
