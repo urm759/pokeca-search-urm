@@ -2,6 +2,7 @@
   const rows = Array.isArray(window.POKECA_DATA) ? window.POKECA_DATA : [];
   const config = window.POKECA_CONFIG || {};
   const nf = new Intl.NumberFormat('ja-JP');
+
   const els = {
     search: document.getElementById('search'),
     evalFilter: document.getElementById('evalFilter'),
@@ -84,14 +85,29 @@
 
   function toneFor(text) {
     const v = String(text || '');
-    if (v.includes('買い') || v.includes('縦積み可') || v.includes('強い')) return 'b-good';
-    if (v.includes('条件付き') || v.includes('少数候補') || v.includes('安ければ') || v.includes('指値なら') || v.includes('あり')) return 'b-warn';
+    if (v.includes('買い') || v.includes('縦積み可') || v.includes('強い') || v.includes('有り')) return 'b-good';
+    if (v.includes('条件付き') || v.includes('少数') || v.includes('指値なら') || v.includes('かなり安ければ')) return 'b-warn';
     if (v.includes('見送り') || v.includes('注意')) return 'b-bad';
     return 'b-info';
   }
 
   function displayName(name) {
     return String(name || '').replace(/^〇/, '');
+  }
+
+  function storeLabel(row) {
+    return String(row['店頭判断'] || row['13k判断'] || '');
+  }
+
+  function psaLabel(row) {
+    return String(row['PSA判断'] || '');
+  }
+
+  function isBuyable(row) {
+    const shop = num(row['ショップ価格']);
+    const recom = num(row['おすすめの仕入れ値']);
+    const upper = num(row['13k仕入れ上限']);
+    return shop > 0 && recom > 0 && upper > 0 && shop <= recom && upper >= recom && psaLabel(row) !== '見送り';
   }
 
   function matches(row) {
@@ -101,7 +117,8 @@
         row['カード'],
         row['収録パック'],
         row['総合評価'],
-        row['13k判断'],
+        storeLabel(row),
+        psaLabel(row),
         row['5k判断'],
         row['流動性'],
         row['資金ロック'],
@@ -109,11 +126,9 @@
       if (!hay.includes(q)) return false;
     }
     if (els.evalFilter.value && row['総合評価'] !== els.evalFilter.value) return false;
-    if (els.judgeFilter.value && row['13k判断'] !== els.judgeFilter.value) return false;
+    if (els.judgeFilter.value && storeLabel(row) !== els.judgeFilter.value) return false;
     if (els.packFilter.value && row['収録パック'] !== els.packFilter.value) return false;
-    if (els.onlyBuyable.checked && !(num(row['ショップ価格']) > 0 && num(row['おすすめの仕入れ値']) > 0 && num(row['ショップ価格']) <= num(row['おすすめの仕入れ値']))) {
-      return false;
-    }
+    if (els.onlyBuyable.checked && !isBuyable(row)) return false;
     return true;
   }
 
@@ -129,8 +144,8 @@
       const rank = { '買い': 0, '条件付き': 1, '見送り': 2 };
       const diffOverall = (rank[a['総合評価']] ?? 9) - (rank[b['総合評価']] ?? 9);
       if (diffOverall !== 0) return diffOverall;
-      const judgeRank = { '縦積み可': 0, '少数候補': 1, '安ければ': 2, '指値なら': 3, '見送り': 4 };
-      const diffJudge = (judgeRank[a['13k判断']] ?? 9) - (judgeRank[b['13k判断']] ?? 9);
+      const judgeRank = { '縦積み可': 0, '少数なら買い': 1, '安ければ少数': 2, 'かなり安ければ': 3, '見送り': 4 };
+      const diffJudge = (judgeRank[storeLabel(a)] ?? 9) - (judgeRank[storeLabel(b)] ?? 9);
       if (diffJudge !== 0) return diffJudge;
       const diffScore = num(b['総合点']) - num(a['総合点']);
       if (diffScore !== 0) return diffScore;
@@ -142,7 +157,8 @@
 
   function rowHtml(row) {
     const imageUrl = row['画像URL'] || '';
-    const buyable = num(row['ショップ価格']) > 0 && num(row['おすすめの仕入れ値']) > 0 && num(row['ショップ価格']) <= num(row['おすすめの仕入れ値']);
+    const buyable = isBuyable(row);
+    const tradeCount = num(row['\u53d6\u5f15\u4ef6\u6570']);
     const rowClass = [
       'row',
       row['総合評価'] === '買い' ? 'row-good' : row['総合評価'] === '条件付き' ? 'row-warn' : 'row-bad',
@@ -161,8 +177,8 @@
           </div>
           <div class="row-badges">
             ${badge(row['総合評価'] || '-', toneFor(row['総合評価']))}
-            ${badge(row['13k判断'] || '-', toneFor(row['13k判断']))}
-            ${badge(`総合点 ${row['総合点'] || '-'}`, 'b-info')}
+            ${badge(storeLabel(row) || '-', toneFor(storeLabel(row)))}
+            ${badge(psaLabel(row) || '-', toneFor(psaLabel(row)))}
           </div>
           <div class="price-stack">
             <div class="price-label">ショップ価格</div>
@@ -183,17 +199,18 @@
           <div class="kv"><span class="k">5k仕入れ上限</span><span class="v">${yen(row['5k仕入れ上限'])}</span></div>
           <div class="kv"><span class="k">13kROI</span><span class="v">${pct(row['13kROI'])}</span></div>
           <div class="kv"><span class="k">5kROI</span><span class="v">${pct(row['5kROI'])}</span></div>
+          <div class="kv"><span class="k">取引件数</span><span class="v">${nf.format(tradeCount)}</span></div>
           <div class="kv"><span class="k">2か月見立て / 流動性</span><span class="v">${escapeHtml(row['2か月見立て'] || '-')} / ${escapeHtml(row['流動性'] || '-')}</span></div>
         </div>
 
         <div class="foot">
           <div class="badges">
-            ${badge(`PSA10差額 ${yen(row['PSA10差額']).replace('円', '')}`, 'b-info')}
+            ${badge(`PSA10差額 ${yen(row['PSA10差額'])}`, 'b-info')}
             ${badge(`利益率 ${pct(row['利益率'])}`, 'b-info')}
             ${badge(`PSA合計 ${nf.format(num(row['PSA合計']))}`, 'b-info')}
             ${badge(`資金ロック ${row['資金ロック'] || '-'}`, toneFor(row['資金ロック']))}
           </div>
-          <a class="link" href="${escapeHtml(row['URL'] || '#')}" target="_blank" rel="noopener noreferrer">元ページを開く</a>
+          <a class="link" href="${escapeHtml(row['URL'] || '#')}" target="_blank" rel="noopener noreferrer">ページを開く</a>
         </div>
       </article>
     `;
@@ -203,20 +220,28 @@
     const filtered = rows.filter(matches).sort(sortRows);
     els.count.textContent = `${filtered.length} 件`;
     els.list.innerHTML = filtered.map(rowHtml).join('') || '<div class="muted">該当データがありません。</div>';
+
     const good = rows.filter((r) => r['総合評価'] === '買い').length;
     const cond = rows.filter((r) => r['総合評価'] === '条件付き').length;
     const skip = rows.filter((r) => r['総合評価'] === '見送り').length;
-    const buyable = rows.filter((r) => num(r['ショップ価格']) > 0 && num(r['おすすめの仕入れ値']) > 0 && num(r['ショップ価格']) <= num(r['おすすめの仕入れ値'])).length;
+    const storeOk = rows.filter((r) => storeLabel(r) !== '見送り').length;
+    const psaOk = rows.filter((r) => psaLabel(r) !== '見送り').length;
+    const buyableCount = rows.filter((r) => isBuyable(r)).length;
+
     els.stats.innerHTML = [
       ['件数', rows.length],
       ['買い', good],
       ['条件', cond],
       ['見送り', skip],
-      ['仕入れ可', buyable],
+      ['店頭可', storeOk],
+      ['PSA可', psaOk],
+      ['仕入れ可', buyableCount],
     ].map(([k, v]) => `<div class="stat"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
 
     if (els.settingsLine) {
-      els.settingsLine.textContent = `設定: 鑑定費 ${nf.format(num(config.fee13k) || 13000)}円 / ${num(config.deliveryMonths13k) || 2}か月 / 目標利益率 ${num(config.targetProfitRate13k) || 20}%  |  鑑定費 ${nf.format(num(config.fee5k) || 5000)}円 / ${num(config.deliveryMonths5k) || 5}か月 / 目標利益率 ${num(config.targetProfitRate5k) || 15}%`;
+      els.settingsLine.textContent =
+        `設定: 鑑定費 ${nf.format(num(config.fee13k) || 13000)}円 / ${num(config.deliveryMonths13k) || 2}か月 / 目標利益率 ${num(config.targetProfitRate13k) || 20}%  |  ` +
+        `鑑定費 ${nf.format(num(config.fee5k) || 5000)}円 / ${num(config.deliveryMonths5k) || 5}か月 / 目標利益率 ${num(config.targetProfitRate5k) || 15}%`;
     }
   }
 
