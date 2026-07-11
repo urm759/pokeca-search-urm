@@ -85,6 +85,25 @@
     return String(name || '').replace(/^〇/, '');
   }
 
+  function derivedRarity(row) {
+    const direct = String(row['レアリティ'] || '').trim();
+    if (direct) return direct;
+    const text = String(row['カード'] || '');
+    const tokens = ['MUR', 'SAR', 'CSR', 'CHR', 'AR', 'SR', 'UR', 'HR', 'SSR', 'RRR', 'RR', 'R', 'U', 'C', 'PR', 'P'];
+    for (const token of tokens) {
+      if (new RegExp(`\\b${token}\\b`).test(text)) return token;
+    }
+    if (/プロモ/.test(text)) return 'プロモ';
+    const bracket = text.match(/\[(.*?)\]/);
+    if (bracket) {
+      for (const token of tokens) {
+        if (new RegExp(`\\b${token}\\b`, 'i').test(bracket[1])) return token;
+      }
+      if (/プロモ/i.test(bracket[1])) return 'プロモ';
+    }
+    return '';
+  }
+
   function storeLabel(row) {
     return String(row['店頭判断'] || row['13k判断'] || '');
   }
@@ -164,7 +183,7 @@
       const hay = [
         row['カード'],
         row['収録パック'],
-        row['レアリティ'],
+        derivedRarity(row),
         row['総合評価'],
         storeLabel(row),
         psaLabel(row),
@@ -225,7 +244,7 @@
             <div class="name-copy">
               <div class="name">${escapeHtml(displayName(row['カード']))}</div>
               <div class="pack">${escapeHtml(row['収録パック'] || '')}</div>
-              <div class="pack">${escapeHtml(row['レアリティ'] || '')}</div>
+              <div class="pack">${escapeHtml(derivedRarity(row) || '')}</div>
             </div>
           </div>
           <div class="row-badges">
@@ -336,7 +355,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=20260711').catch(() => {});
     });
   }
 

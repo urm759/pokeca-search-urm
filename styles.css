@@ -338,6 +338,15 @@ select:focus {
   color: var(--bad);
 }
 
+.store-price-input {
+  width: 100%;
+  min-height: 38px;
+  max-width: 220px;
+  padding: 0 10px;
+  font-size: 14px;
+  text-align: right;
+}
+
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(120px, 1fr));
@@ -420,6 +429,10 @@ select:focus {
   }
   .price-stack {
     justify-items: start;
+    text-align: left;
+  }
+  .store-price-input {
+    max-width: 100%;
     text-align: left;
   }
   .meta-grid {
