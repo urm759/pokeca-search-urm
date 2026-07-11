@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pokeca-search-cache-v4';
+const CACHE_NAME = 'pokeca-search-cache-v5';
 const ASSETS = [
   './',
   './index.html',
