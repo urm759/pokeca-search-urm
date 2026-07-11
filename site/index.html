@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>トレカ仕入れ判断</title>
+  <meta name="theme-color" content="#eef2f6" />
+  <link rel="manifest" href="./manifest.json?v=20260711" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('pokeca-theme');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.dataset.theme = saved;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', saved === 'dark' ? '#101522' : '#eef2f6');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="./styles.css?v=20260711" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="hero-copy">
+        <div class="eyebrow">仕入れチェック用</div>
+        <h1>トレカ仕入れ判断</h1>
+        <p class="lead">カード名、収録パック、現在相場、利益率、取引件数をまとめて見ながら、店頭価格を入れてその場で判断できます。</p>
+        <p class="lead settings-line" id="settingsLine"></p>
+      </div>
+      <div class="topbar-actions">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="テーマ切り替え"></button>
+        <div class="stats" id="stats" aria-label="集計"></div>
+      </div>
+    </header>
+
+    <section class="controls" aria-label="検索条件">
+      <input id="search" type="search" placeholder="カード名・パック・判定で検索" />
+      <select id="evalFilter" aria-label="総合評価">
+        <option value="">総合評価 すべて</option>
+        <option value="買い">買い</option>
+        <option value="条件付き">条件付き</option>
+        <option value="見送り">見送り</option>
+      </select>
+      <select id="judgeFilter" aria-label="店頭判断">
+        <option value="">店頭判断 すべて</option>
+        <option value="縦積み可">縦積み可</option>
+        <option value="少数なら買い">少数なら買い</option>
+        <option value="かなり安ければ">かなり安ければ</option>
+        <option value="見送り">見送り</option>
+      </select>
+      <select id="sortFilter" aria-label="並び替え">
+        <option value="summary">総合順</option>
+        <option value="roi13">13k ROI</option>
+        <option value="roi5">5k ROI</option>
+      </select>
+      <select id="packFilter" aria-label="収録パック">
+        <option value="">収録パック すべて</option>
+      </select>
+      <label class="toggle">
+        <input id="onlyBuyable" type="checkbox" />
+        <span>仕入れ可のみ</span>
+      </label>
+    </section>
+
+    <section class="quick" aria-label="クイック検索">
+      <button type="button" data-term="ピカチュウ">ピカチュウ</button>
+      <button type="button" data-term="メガ">メガ</button>
+      <button type="button" data-term="SAR">SAR</button>
+      <button type="button" data-term="プロモ">プロモ</button>
+      <button type="button" data-term="ポケモン">ポケモン</button>
+    </section>
+
+    <section class="results">
+      <div class="results-head">
+        <div class="result-count" id="resultCount"></div>
+        <div class="hint">店頭価格を入れると、仕入れ可の判定だけその場で切り替わります。</div>
+      </div>
+      <div id="list" class="list"></div>
+    </section>
+  </main>
+
+  <script src="./data.js?v=20260711"></script>
+  <script src="./app.js?v=20260711"></script>
+</body>
+</html>
