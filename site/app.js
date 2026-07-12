@@ -162,19 +162,19 @@
 
   function shopSignal(row) {
     const current = num(row['現在相場']);
-    const recommended = num(row['おすすめの仕入れ値']);
     const upper = num(row['13k仕入れ上限']);
-    if (!current || !recommended || !upper) return '-';
-    if (current <= recommended && current <= upper) return '店頭OK';
-    if (current <= upper) return '店頭注意';
+    if (!current || !upper) return '-';
+    if (current <= upper * 0.95) return '店頭OK';
+    if (current <= upper * 1.08) return '店頭注意';
     return '店頭NG';
   }
 
   function isBuyable(row, shopOverride) {
     const shop = effectiveShopPrice(row, shopOverride);
-    const recom = num(row['おすすめの仕入れ値']);
     const upper = num(row['13k仕入れ上限']);
-    return shop > 0 && recom > 0 && upper > 0 && shop <= recom && shop <= upper && psaLabel(row) !== '見送り';
+    const psaOk = psaLabel(row) !== '見送り';
+    if (!shop || !upper || !psaOk) return false;
+    return shop <= upper * 1.08;
   }
 
   function matches(row) {
