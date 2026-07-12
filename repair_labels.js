@@ -4,11 +4,153 @@ const path = require('path');
 
 const root = process.cwd();
 const dataPath = path.join(root, 'site', 'data.js');
+const textCache = new Map();
+const snkrdunkAAvgCache = new Map();
+const torecaMarketCache = new Map();
+
+function browserHeaders() {
+  return {
+    'user-agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
+    accept:
+      'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    'accept-language': 'ja-JP,ja;q=0.9,en;q=0.8',
+  };
+}
+
+async function fetchText(url) {
+  if (textCache.has(url)) return textCache.get(url);
+  const pending = (async () => {
+    const res = await fetch(url, { headers: browserHeaders() });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${url}: ${res.status}`);
+    }
+    return res.text();
+  })();
+  textCache.set(url, pending);
+  try {
+    return await pending;
+  } catch (err) {
+    textCache.delete(url);
+    throw err;
+  }
+}
 
 function num(v) {
   if (v === null || v === undefined || v === '') return 0;
   const n = Number(String(v).replace(/[^\d.\-]/g, ''));
   return Number.isFinite(n) ? n : 0;
+}
+
+function extractSnkrdunkUrl(html) {
+  const match = String(html || '').match(/https:\/\/snkrdunk\.com\/apparels\/\d+/);
+  return match ? match[0] : '';
+}
+
+function extractProductCatalogId(html) {
+  const text = String(html || '');
+  const patterns = [
+    /productCatalogId\\":(\d+)/,
+    /productCatalogId":(\d+)/,
+    /"productCatalogId":(\d+)/,
+    /productCatalogId:(\d+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return num(match[1]);
+  }
+  return 0;
+}
+
+function extractTorecaTrades(html) {
+  const normalized = String(html || '').replace(/\\"/g, '"');
+  const trades = [];
+  for (const match of normalized.matchAll(/\{"price":(\d+),"soldAt":"([^"]+)","label":"([^"]*)","title":"([^"]+)"\}/g)) {
+    trades.push({
+      price: num(match[1]),
+      soldAt: match[2],
+      label: match[3],
+      title: match[4],
+    });
+  }
+  return trades;
+}
+
+function extractBeautyPrice(html) {
+  const normalized = String(html || '').replace(/\\"/g, '"');
+  const patterns = [
+    /素体（美品）の最新相場は約¥([0-9,]+)/,
+    /素体の最新相場は約¥([0-9,]+)/,
+    /素体¥([0-9,]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match) return num(match[1]);
+  }
+  return 0;
+}
+
+async function fetchTorecaMarketDetails(item) {
+  const cacheKey = String(item.URL || item['URL'] || item.id || '');
+  if (torecaMarketCache.has(cacheKey)) return torecaMarketCache.get(cacheKey);
+
+  try {
+    const url = String(item.URL || item['URL'] || '');
+    const torecaHtml = await fetchText(url);
+    const trades = extractTorecaTrades(torecaHtml);
+    const torecaATrades = trades.filter((trade) => String(trade.title || '').trim() === 'A' && num(trade.price) > 0);
+    const torecaA = torecaATrades.length
+      ? Math.round(torecaATrades.reduce((sum, trade) => sum + num(trade.price), 0) / torecaATrades.length)
+      : 0;
+    const beautyPrice = extractBeautyPrice(torecaHtml);
+    const snkrdunkUrl = extractSnkrdunkUrl(torecaHtml);
+    const result = { torecaA, beautyPrice, snkrdunkUrl };
+    torecaMarketCache.set(cacheKey, result);
+    return result;
+  } catch (_) {
+    const result = { torecaA: 0, beautyPrice: 0, snkrdunkUrl: '' };
+    torecaMarketCache.set(cacheKey, result);
+    return result;
+  }
+}
+
+async function fetchSnkrdunkAAverage(snkrdunkUrl, cacheKey) {
+  const key = String(cacheKey || snkrdunkUrl || '');
+  if (snkrdunkAAvgCache.has(key)) return snkrdunkAAvgCache.get(key);
+
+  try {
+    if (!snkrdunkUrl) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+    const snkrdunkHtml = await fetchText(snkrdunkUrl);
+    const productCatalogId = extractProductCatalogId(snkrdunkHtml);
+    if (!productCatalogId) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+
+    const historyRes = await fetch(`https://snkrdunk.com/v3/products/${productCatalogId}/trading-history`, {
+      headers: browserHeaders(),
+    });
+    if (!historyRes.ok) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+
+    const history = await historyRes.json();
+    const aTrades = Array.isArray(history.trades)
+      ? history.trades.filter((trade) => String(trade.title || '').trim() === 'A' && num(trade.price) > 0)
+      : [];
+    const aAvg = aTrades.length
+      ? Math.round(aTrades.reduce((sum, trade) => sum + num(trade.price), 0) / aTrades.length)
+      : 0;
+    snkrdunkAAvgCache.set(key, aAvg);
+    return aAvg;
+  } catch (_) {
+    snkrdunkAAvgCache.set(key, 0);
+    return 0;
+  }
 }
 
 function round100(v) {
@@ -174,7 +316,9 @@ const target13k = Number(config.targetProfitRate13k) || 20;
 const target5k = Number(config.targetProfitRate5k) || 15;
 
 for (const row of rows) {
-  const currentPrice = num(row['現在相場']);
+  const toreca = await fetchTorecaMarketDetails(row);
+  const snkrdunkA = await fetchSnkrdunkAAverage(toreca.snkrdunkUrl, row['URL']);
+  const currentPrice = num(snkrdunkA || toreca.torecaA || toreca.beautyPrice || row['現在相場']);
   const avgPrice = num(row['平均相場']);
   const psa10 = num(row['PSA10売値']);
   const trend = trendLabel(row);
@@ -221,6 +365,17 @@ for (const row of rows) {
   row['おすすめの仕入れ値'] = String(recommendation);
   row['__storeJudge'] = storeJudge;
   row['__psaJudge'] = psaJudge;
+  row['SNKRDUNK_A'] = String(snkrdunkA);
+  row['__snkrdunkA'] = String(snkrdunkA);
+  row['__torecaA'] = String(toreca.torecaA || 0);
+  row['__beautyPrice'] = String(toreca.beautyPrice || 0);
+  row['__priceSource'] = snkrdunkA
+    ? 'SNKRDUNK_A'
+    : toreca.torecaA
+      ? 'TORECA_A'
+      : toreca.beautyPrice
+        ? 'BEAUTY'
+        : 'CURRENT';
 }
 
 const output = `window.POKECA_CONFIG = ${JSON.stringify(config, null, 2)};\nwindow.POKECA_DATA = ${JSON.stringify(rows, null, 2)};\n`;

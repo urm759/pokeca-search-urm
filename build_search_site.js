@@ -71,6 +71,7 @@ function fmtPct(v) {
 
 const textCache = new Map();
 const snkrdunkAAvgCache = new Map();
+const torecaMarketCache = new Map();
 
 async function fetchText(url) {
   if (textCache.has(url)) return textCache.get(url);
@@ -88,6 +89,54 @@ async function fetchText(url) {
     textCache.delete(url);
     throw err;
   }
+}
+
+function extractSnkrdunkUrl(html) {
+  const match = String(html || '').match(/https:\/\/snkrdunk\.com\/apparels\/\d+/);
+  return match ? match[0] : '';
+}
+
+function extractProductCatalogId(html) {
+  const text = String(html || '');
+  const patterns = [
+    /productCatalogId\\":(\d+)/,
+    /productCatalogId":(\d+)/,
+    /"productCatalogId":(\d+)/,
+    /productCatalogId:(\d+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return num(match[1]);
+  }
+  return 0;
+}
+
+function extractTorecaTrades(html) {
+  const normalized = String(html || '').replace(/\\"/g, '"');
+  const trades = [];
+  for (const match of normalized.matchAll(/\{"price":(\d+),"soldAt":"([^"]+)","label":"([^"]*)","title":"([^"]+)"\}/g)) {
+    trades.push({
+      price: num(match[1]),
+      soldAt: match[2],
+      label: match[3],
+      title: match[4],
+    });
+  }
+  return trades;
+}
+
+function extractBeautyPrice(html) {
+  const normalized = String(html || '').replace(/\\"/g, '"');
+  const patterns = [
+    /素体（美品）の最新相場は約¥([0-9,]+)/,
+    /素体の最新相場は約¥([0-9,]+)/,
+    /素体¥([0-9,]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = normalized.match(pattern);
+    if (match) return num(match[1]);
+  }
+  return 0;
 }
 
 function csvEscape(value) {
@@ -305,22 +354,43 @@ function extractProductCatalogId(html) {
   return 0;
 }
 
-async function fetchSnkrdunkAAverage(item) {
+async function fetchTorecaMarketDetails(item) {
   const cacheKey = String(item.id || '');
-  if (snkrdunkAAvgCache.has(cacheKey)) return snkrdunkAAvgCache.get(cacheKey);
+  if (torecaMarketCache.has(cacheKey)) return torecaMarketCache.get(cacheKey);
 
   try {
     const torecaHtml = await fetchText(`https://toreca-souba.com/cards/${item.id}`);
+    const trades = extractTorecaTrades(torecaHtml);
+    const torecaATrades = trades.filter((trade) => String(trade.title || '').trim() === 'A' && num(trade.price) > 0);
+    const torecaA = torecaATrades.length
+      ? Math.round(torecaATrades.reduce((sum, trade) => sum + num(trade.price), 0) / torecaATrades.length)
+      : 0;
+    const beautyPrice = extractBeautyPrice(torecaHtml);
     const snkrdunkUrl = extractSnkrdunkUrl(torecaHtml);
+    const result = { torecaA, beautyPrice, snkrdunkUrl };
+    torecaMarketCache.set(cacheKey, result);
+    return result;
+  } catch (_) {
+    const result = { torecaA: 0, beautyPrice: 0, snkrdunkUrl: '' };
+    torecaMarketCache.set(cacheKey, result);
+    return result;
+  }
+}
+
+async function fetchSnkrdunkAAverage(snkrdunkUrl, cacheKey) {
+  const key = String(cacheKey || snkrdunkUrl || '');
+  if (snkrdunkAAvgCache.has(key)) return snkrdunkAAvgCache.get(key);
+
+  try {
     if (!snkrdunkUrl) {
-      snkrdunkAAvgCache.set(cacheKey, 0);
+      snkrdunkAAvgCache.set(key, 0);
       return 0;
     }
 
     const snkrdunkHtml = await fetchText(snkrdunkUrl);
     const productCatalogId = extractProductCatalogId(snkrdunkHtml);
     if (!productCatalogId) {
-      snkrdunkAAvgCache.set(cacheKey, 0);
+      snkrdunkAAvgCache.set(key, 0);
       return 0;
     }
 
@@ -328,7 +398,7 @@ async function fetchSnkrdunkAAverage(item) {
       headers: browserHeaders(),
     });
     if (!historyRes.ok) {
-      snkrdunkAAvgCache.set(cacheKey, 0);
+      snkrdunkAAvgCache.set(key, 0);
       return 0;
     }
 
@@ -339,18 +409,19 @@ async function fetchSnkrdunkAAverage(item) {
     const aAvg = aTrades.length
       ? Math.round(aTrades.reduce((sum, trade) => sum + num(trade.price), 0) / aTrades.length)
       : 0;
-    snkrdunkAAvgCache.set(cacheKey, aAvg);
+    snkrdunkAAvgCache.set(key, aAvg);
     return aAvg;
   } catch (_) {
-    snkrdunkAAvgCache.set(cacheKey, 0);
+    snkrdunkAAvgCache.set(key, 0);
     return 0;
   }
 }
 
 async function normalizeRecord(item) {
-  const snkrdunkA = await fetchSnkrdunkAAverage(item);
-  const currentPrice = num(snkrdunkA || item.snkPrice || item.price);
-  const avgPrice = num(item.price || item.snkPrice || snkrdunkA);
+  const toreca = await fetchTorecaMarketDetails(item);
+  const snkrdunkA = await fetchSnkrdunkAAverage(toreca.snkrdunkUrl, item.id);
+  const currentPrice = num(snkrdunkA || toreca.torecaA || toreca.beautyPrice || item.snkPrice || item.price);
+  const avgPrice = num(item.price || item.snkPrice || currentPrice);
   const psa10 = num(item.snkPsa10Price);
   const listings = num(item.snkListings);
   const psa10Count = num(item.snkPsa10Count);
@@ -418,6 +489,9 @@ async function normalizeRecord(item) {
     '__sourcePrice': fmtInt(currentPrice),
     '__avgPrice': fmtInt(avgPrice),
     '__snkrdunkA': fmtInt(snkrdunkA),
+    '__torecaA': fmtInt(toreca.torecaA),
+    '__beautyPrice': fmtInt(toreca.beautyPrice),
+    '__priceSource': snkrdunkA ? 'SNKRDUNK_A' : toreca.torecaA ? 'TORECA_A' : toreca.beautyPrice ? 'BEAUTY' : 'CURRENT',
     '__storeJudge': storeJudge,
     '__psaJudge': psaJudge,
   };
