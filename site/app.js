@@ -105,11 +105,11 @@
   }
 
   function storeLabel(row) {
-    return String(row['店頭判断'] || row['13k判断'] || '');
+    return String(row['店頭可否'] || row['店頭判断'] || row['13k判断'] || '');
   }
 
   function psaLabel(row) {
-    return String(row['PSA判断'] || '');
+    return String(row['PSA可否'] || row['PSA判断'] || '');
   }
 
   function priceKey(row) {
@@ -191,7 +191,8 @@
     const shop = effectiveShopPrice(row, shopOverride);
     const upper = num(row['13k仕入れ上限']);
     const psaOk = psaLabel(row) !== '見送り';
-    if (!shop || !upper || !psaOk) return false;
+    const storeOk = storeLabel(row) !== '見送り';
+    if (!shop || !upper || !psaOk || !storeOk) return false;
     return shop <= upper * 1.08;
   }
 
@@ -266,9 +267,9 @@
             </div>
           </div>
           <div class="row-badges">
-            ${badge(`買っていいか ${row['総合評価'] || '-'}`, toneFor(row['総合評価']))}
-            ${badge(`店頭価格確認 ${shopSignal(row)}`, toneFor(shopSignal(row)))}
-            ${badge(`鑑定価値 ${psaLabel(row) || '-'}`, toneFor(psaLabel(row)))}
+            ${badge(`PSA可否 ${psaLabel(row) || '-'}`, toneFor(psaLabel(row)))}
+            ${badge(`店頭可否 ${storeLabel(row) || '-'}`, toneFor(storeLabel(row)))}
+            ${badge(`総合評価 ${row['総合評価'] || '-'}`, toneFor(row['総合評価']))}
           </div>
           <div class="price-stack">
             <div class="price-label">現在相場</div>
@@ -304,7 +305,7 @@
             ${badge(`利益率 ${pct(row['利益率'])}`, 'b-info')}
             ${badge(`PSA10枚数 ${nf.format(num(row['PSA10枚数']))}`, 'b-info')}
             ${badge(`平均比 ${avgSignal(row)}`, 'b-info')}
-            ${badge(`鑑定価値 ${row['PSA判断'] || '-'}`, toneFor(row['PSA判断']))}
+            ${badge(`PSA可否 ${row['PSA可否'] || row['PSA判断'] || '-'}`, toneFor(row['PSA可否'] || row['PSA判断']))}
           </div>
           <a class="link" href="${escapeHtml(row['URL'] || '#')}" target="_blank" rel="noopener noreferrer">開く</a>
         </div>
