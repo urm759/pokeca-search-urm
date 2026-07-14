@@ -246,6 +246,16 @@ function capPrice(psa10, psa9, fee, minProfitRate) {
   return round100(upper);
 }
 
+function resolvePsa9Price(psa9Raw, snkrdunkA, shopPrice) {
+  const raw = n(psa9Raw) ?? 0;
+  if (raw > 0) return { value: Math.round(raw), source: '実値' };
+  const snkr = n(snkrdunkA) ?? 0;
+  if (snkr > 0) return { value: Math.round(snkr), source: 'SNKRDUNK_A' };
+  const shop = n(shopPrice) ?? 0;
+  if (shop > 0) return { value: Math.round(shop * 0.75), source: '仕入れ額75%' };
+  return { value: 0, source: '不明' };
+}
+
 function extractShopPrices(shops) {
   const inStock = shops.filter((x) => Number(x.stock) > 0);
   const pool = inStock.length ? inStock : shops;
@@ -372,7 +382,7 @@ async function main() {
     const psa10Info = info[2] || {};
     const current = n(currentInfo.nPriceRecent) ?? 0;
     const avgRaw = n(currentInfo.nPriceAvg) ?? 0;
-    const psa9 = n(psa9Info.nPriceRecent) ?? 0;
+    const psa9Raw = n(psa9Info.nPriceRecent) ?? 0;
     const psa10 = n(psa10Info.nPriceRecent) ?? 0;
 
     const shopData = await fetchJson(`https://api.pokeca-chart.com/php/get.php?function=get_shop_stock_data&item_id=${item.nItemId}`);
@@ -386,6 +396,8 @@ async function main() {
     const shopInfo = chooseShopPrice(Array.isArray(shopData) ? shopData : [], current, avg);
     const shopPrice = shopInfo.price;
     const tradeCount = shopInfo.tradeCount;
+    const psa9Resolved = resolvePsa9Price(psa9Raw, snkrdunkA, shopPrice);
+    const psa9 = psa9Resolved.value;
 
     const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
     let grd = [];
@@ -440,6 +452,7 @@ async function main() {
       '収録パック': (item.arrayCategories && item.arrayCategories[0]) || '',
       'PSA10売値': fmtInt(psa10),
       'PSA9売値': fmtInt(psa9),
+      'PSA9ソース': psa9Resolved.source,
       'PSA10枚数': fmtInt(psa10Count),
       'PSA9枚数': fmtInt(psa9Count),
       'PSA総数': fmtInt(psaTotal),
