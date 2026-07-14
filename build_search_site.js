@@ -1,3 +1,6 @@
+require('./refresh_watchlist_site.js');
+process.exit(0);
+
 const fs = require('fs');
 const path = require('path');
 
@@ -5,6 +8,7 @@ const root = process.cwd();
 const siteDir = path.join(root, 'site');
 const outputJs = path.join(siteDir, 'data.js');
 const settingsPath = path.join(root, 'pricing_settings.json');
+const watchlistCsvPath = path.join(root, 'inputs', 'pokeca-watchlist-20260714.csv');
 
 const outputShopCsv = path.join(root, 'outputs', 'psa_ranked_13k_2month_pack_buy_front_shop_note_2026-07-08.csv');
 const outputSimpleCsv = path.join(root, 'outputs', 'psa_ranked_13k_2month_pack_buy_front_note_2026-07-08.csv');
@@ -67,6 +71,65 @@ function fmtInt(v) {
 function fmtPct(v) {
   if (v === null || v === undefined || v === '') return '';
   return Number(v).toFixed(1).replace(/\.0$/, '');
+}
+
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') {
+          field += '"';
+          i += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        field += ch;
+      }
+      continue;
+    }
+    if (ch === '"') {
+      inQuotes = true;
+    } else if (ch === ',') {
+      row.push(field);
+      field = '';
+    } else if (ch === '\n') {
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = '';
+    } else if (ch !== '\r') {
+      field += ch;
+    }
+  }
+  if (field.length || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function loadWatchlistSlugs() {
+  try {
+    if (!fs.existsSync(watchlistCsvPath)) return null;
+    const csvText = fs.readFileSync(watchlistCsvPath, 'utf8').replace(/^\uFEFF/, '');
+    const csvRows = parseCsv(csvText);
+    const headers = csvRows.shift() || [];
+    const slugIndex = headers.indexOf('slug');
+    if (slugIndex === -1) return null;
+    return new Set(
+      csvRows
+        .map((cols) => String(cols[slugIndex] || '').trim())
+        .filter(Boolean),
+    );
+  } catch (_) {
+    return null;
+  }
 }
 
 const textCache = new Map();
@@ -572,8 +635,13 @@ async function fetchAndParseSource() {
 
 async function main() {
   const source = await fetchAndParseSource();
+  const watchlistSlugs = loadWatchlistSlugs();
   const rows = [];
-  for (const item of source.filter((entry) => entry.title === 'ポケモン')) {
+  for (const item of source.filter((entry) => {
+    if (entry.title !== 'ポケモン') return false;
+    if (!watchlistSlugs) return true;
+    return watchlistSlugs.has(String(entry.strSlug || '').trim());
+  })) {
     rows.push(await normalizeRecord(item));
   }
 
