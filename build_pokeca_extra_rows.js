@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+﻿const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -12,6 +12,12 @@ const DEFAULT_SETTINGS = {
   targetProfitRate5k: 15,
 };
 
+const SETTINGS = loadSettings();
+const FEE_13K = Number(SETTINGS.fee13k) || 13000;
+const FEE_5K = Number(SETTINGS.fee5k) || 5000;
+const TARGETS = new Set(process.argv.slice(2));
+const snkrdunkAAvgCache = new Map();
+
 function loadSettings() {
   try {
     const raw = fs.readFileSync(SETTINGS_PATH, 'utf8');
@@ -20,12 +26,6 @@ function loadSettings() {
     return { ...DEFAULT_SETTINGS };
   }
 }
-
-const SETTINGS = loadSettings();
-const FEE_13K = Number(SETTINGS.fee13k) || 13000;
-const FEE_5K = Number(SETTINGS.fee5k) || 5000;
-
-const TARGETS = new Set(process.argv.slice(2));
 
 function pad(n) {
   return String(n).padStart(2, '0');
@@ -82,11 +82,91 @@ function round100(v) {
   return Math.round(v / 100) * 100;
 }
 
+async function fetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} -> ${res.status}`);
+  return res.json();
+}
+
+async function fetchText(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url} -> ${res.status}`);
+  return res.text();
+}
+
+function extractProductCatalogId(html) {
+  const text = String(html || '');
+  const patterns = [
+    /productCatalogId\\":(\d+)/,
+    /productCatalogId":(\d+)/,
+    /"productCatalogId":(\d+)/,
+    /productCatalogId:(\d+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return Number(match[1]) || 0;
+  }
+  return 0;
+}
+
+async function fetchSnkrdunkAAverage(snkrdunkUrl, cacheKey) {
+  const key = String(cacheKey || snkrdunkUrl || '');
+  if (snkrdunkAAvgCache.has(key)) return snkrdunkAAvgCache.get(key);
+  try {
+    if (!snkrdunkUrl) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+
+    const pageRes = await fetch(snkrdunkUrl, {
+      headers: {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'accept-language': 'ja-JP,ja;q=0.9,en;q=0.8',
+      },
+    });
+    if (!pageRes.ok) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+
+    const html = await pageRes.text();
+    const productCatalogId = extractProductCatalogId(html);
+    if (!productCatalogId) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+
+    const historyRes = await fetch(`https://snkrdunk.com/v3/products/${productCatalogId}/trading-history`, {
+      headers: {
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
+        accept: 'application/json, text/plain, */*',
+      },
+    });
+    if (!historyRes.ok) {
+      snkrdunkAAvgCache.set(key, 0);
+      return 0;
+    }
+
+    const hist = await historyRes.json();
+    const trades = Array.isArray(hist.trades) ? hist.trades : [];
+    const aTrades = trades.filter((trade) => String(trade.title || '').trim() === 'A' && Number(trade.price) > 0);
+    const aAvg = aTrades.length
+      ? Math.round(aTrades.reduce((sum, trade) => sum + Number(trade.price), 0) / aTrades.length)
+      : 0;
+    snkrdunkAAvgCache.set(key, aAvg);
+    return aAvg;
+  } catch (_) {
+    snkrdunkAAvgCache.set(key, 0);
+    return 0;
+  }
+}
+
 function trendLabel(rate7, rate30) {
   const r7 = n(rate7) ?? 0;
   const r30 = n(rate30) ?? 0;
   if (r30 <= -0.15) return '下落注意';
-  if ((r7 > 0.12 && r30 > 0.08) || r30 >= 0.2) return '過熱警戒';
+  if ((r7 > 0.12 && r30 > 0.08) || r30 >= 0.2) return '上昇強い';
   if (r7 > 0 && r30 < 0) return '押し目';
   if (r7 < 0 && r30 < 0) return '下落注意';
   return '横ばい';
@@ -102,7 +182,7 @@ function liquidityLabel(pv, volume) {
 
 function lockLabel(totalInvestment) {
   if (totalInvestment <= 20000) return '軽い';
-  if (totalInvestment <= 50000) return '軽め';
+  if (totalInvestment <= 50000) return 'やや重い';
   if (totalInvestment <= 80000) return '重め';
   return '重い';
 }
@@ -126,20 +206,20 @@ function judge13k(roi, trend, liquidity) {
 
 function judge5k(roi) {
   if (roi >= 35) return '強い';
-  if (roi >= 20) return '買い';
-  if (roi >= 10) return '指値なら';
-  return 'サブ';
+  if (roi >= 20) return 'あり';
+  if (roi >= 10) return '注意';
+  return '見送り';
 }
 
 function storeJudge(shopPrice, recom, upper13k) {
-  if (!shopPrice || !recom || upper13k === null) return '見送り';
-  if (shopPrice <= recom && upper13k >= recom) return '有り';
+  if (!shopPrice || !recom || upper13k === null || upper13k === undefined) return '見送り';
+  if (shopPrice <= recom && upper13k >= recom) return '可';
   if (shopPrice <= recom) return '条件付き';
   return '見送り';
 }
 
 function psaJudge(psaDiff, profitRate) {
-  if (Number(psaDiff) > 0 && Number(profitRate) > 0) return '有り';
+  if (Number(psaDiff) > 0 && Number(profitRate) > 0) return '可';
   return '見送り';
 }
 
@@ -150,10 +230,8 @@ function recomPrice(psa10, psa9, storeEval) {
   const upper = (expectedSale - FEE_13K * (1 + rate)) / (1 + rate);
   if (!Number.isFinite(upper) || upper <= 0) return 0;
   let factor = 0.85;
-  if (storeEval === '縦積み可') factor = 0.9;
-  else if (storeEval === '少数なら買い') factor = 0.86;
-  else if (storeEval === '安ければ少数') factor = 0.8;
-  else if (storeEval === 'かなり安ければ') factor = 0.78;
+  if (storeEval === '可') factor = 0.9;
+  else if (storeEval === '条件付き') factor = 0.82;
   else if (storeEval === '見送り') factor = 0.75;
   return round100(upper * factor);
 }
@@ -168,184 +246,30 @@ function capPrice(psa10, psa9, fee, minProfitRate) {
   return round100(upper);
 }
 
-function scoreRow({ roi13, roi5, trend, liquidity, psaTotal, psaRate, current, avg, shop, recom, psaEval }) {
-  let score = 0;
-  if (roi13 >= 30) score += 3;
-  else if (roi13 >= 15) score += 2;
-  else if (roi13 >= 8) score += 1;
-  if (roi5 >= 35) score += 1;
-  if (roi5 >= 20) score += 1;
-  if (trend === '押し目') score += 1;
-  if (trend === '過熱警戒') score -= 1;
-  if (liquidity === '高' || liquidity === '中高') score += 1;
-  if ((n(psaTotal) ?? 0) >= 1000) score += 1;
-  if ((n(psaRate) ?? 0) >= 80) score += 1;
-  if ((n(current) ?? 0) < (n(avg) ?? 0)) score += 1;
-  if ((n(shop) ?? 0) < (n(recom) ?? 0)) score += 1;
-  if (psaEval === '見送り') score -= 4;
-  return score;
+function extractShopPrices(shops) {
+  const inStock = shops.filter((x) => Number(x.stock) > 0);
+  const pool = inStock.length ? inStock : shops;
+  return pool.map((x) => Number(x.min_price)).filter((x) => x > 0);
 }
 
-function overall(score) {
-  if (score >= 7) return '買い';
-  if (score >= 4) return '条件付き';
-  return '見送り';
+function trimmedAverage(values) {
+  const nums = values
+    .map((v) => Number(v))
+    .filter((v) => Number.isFinite(v) && v > 0)
+    .sort((a, b) => a - b);
+  if (!nums.length) return 0;
+  if (nums.length === 1) return Math.round(nums[0]);
+  if (nums.length === 2) return Math.round((nums[0] + nums[1]) / 2);
+  const pool = nums.length >= 4 ? nums.slice(1, -1) : nums;
+  return Math.round(pool.reduce((sum, v) => sum + v, 0) / pool.length);
 }
 
-function noteText(overallEval, storeEval, psaEval, trend, liquidity, lock, score) {
-  const parts = [];
-  if (overallEval === '買い') parts.push('総合は仕入れ候補');
-  else if (overallEval === '条件付き') parts.push('総合は条件付き');
-  else parts.push('総合は見送り寄り');
-
-  if (storeEval === '縦積み可') parts.push('店頭は縦積み可');
-  else if (storeEval === '少数なら買い') parts.push('店頭は少数なら買い');
-  else if (storeEval === '安ければ少数') parts.push('店頭は安ければ少数');
-  else if (storeEval === 'かなり安ければ') parts.push('店頭はかなり安ければ');
-  else parts.push('店頭は見送り');
-
-  parts.push(psaEval === '有り' ? 'PSAは利益あり' : 'PSAは見送り');
-
-  if (trend === '押し目') parts.push('2か月見立ては押し目');
-  else if (trend === '横ばい') parts.push('2か月見立ては横ばい');
-  else if (trend === '過熱警戒') parts.push('2か月で反動注意');
-  else parts.push('2か月見立ては下落注意');
-
-  if (score >= 6) parts.push('PSA鑑定数は薄めで値動き荒め');
-  else if (score >= 4) parts.push('PSA鑑定数は標準的');
-  else parts.push('PSA鑑定数は厚めで上値は重め');
-
-  if (lock === '重い') parts.push('資金ロック重い');
-  else if (lock === '重め') parts.push('資金ロック重め');
-  else parts.push('資金ロックは比較的軽い');
-
-  if (liquidity === '高') parts.push('流動性は高い');
-  else if (liquidity === '中高') parts.push('流動性は中高');
-  else parts.push('流動性は中');
-
-  if (overallEval === '条件付き') parts.push('5kだけなら検討余地あり');
-  return parts.join(' / ');
-}
-
-async function fetchJson(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`${url} -> ${res.status}`);
-  return res.json();
-}
-
-async function fetchText(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`${url} -> ${res.status}`);
-  return res.text();
-}
-
-async function main() {
-  const { items } = await fetchItemMap();
-  const map = new Map(items.map((item) => [item.strSlug, item]));
-  const out = [];
-
-  for (const slug of TARGETS) {
-    const item = map.get(slug);
-    if (!item) continue;
-
-    const info = item.arrayPriceInfo || [];
-    const currentInfo = info[0] || {};
-    const psa9Info = info[1] || {};
-    const psa10Info = info[2] || {};
-    const current = n(currentInfo.nPriceRecent) ?? 0;
-    const avg = n(currentInfo.nPriceAvg) ?? 0;
-    const psa9 = n(psa9Info.nPriceRecent) ?? 0;
-    const psa10 = n(psa10Info.nPriceRecent) ?? 0;
-
-    const shopData = await fetchJson(`https://api.pokeca-chart.com/php/get.php?function=get_shop_stock_data&item_id=${item.nItemId}`);
-    const shopInfo = chooseShopPrice(Array.isArray(shopData) ? shopData : [], current, avg);
-    const shopPrice = shopInfo.price;
-    const tradeCount = shopInfo.tradeCount;
-
-    const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
-    let grd = [];
-    try {
-      grd = JSON.parse(grdText);
-    } catch {
-      grd = [];
-    }
-    const grdInfo = grd[0] || {};
-    const psa10Count = n(grdInfo.grd_status_10) ?? n(item.nPSA10Num) ?? '';
-    const psa9Count = n(grdInfo.grd_status_9) ?? '';
-    const psaTotal = n(grdInfo.grd_status_all) ?? '';
-    const psaRate = psa10Count && psaTotal ? fmtNum((psa10Count / psaTotal) * 100, 1) : '';
-
-    const trend = trendLabel(currentInfo.fRiseFallRate7, currentInfo.fRiseFallRate30);
-    const liq = liquidityLabel(item.nPv, item.nVolume);
-    const roi13 = shopPrice ? fmtNum((((psa10 + psa9) / 2 - shopPrice - FEE_13K) / (shopPrice + FEE_13K)) * 100, 1) : '';
-    const roi5 = shopPrice ? fmtNum((((psa10 + psa9) / 2 - shopPrice - FEE_5K) / (shopPrice + FEE_5K)) * 100, 1) : '';
-
-    const storeEval = judge13k(n(roi13) ?? 0, trend, liq);
-    const psa10Diff = psa10 ? Math.round(psa10 - (shopPrice || 0) - FEE_13K) : '';
-    const psaProfitRate = shopPrice ? fmtNum((psa10Diff / ((shopPrice || 0) + FEE_13K)) * 100, 1) : '';
-    const psaEval = psaJudge(psa10Diff, psaProfitRate);
-    const recom = recomPrice(psa10, psa9, storeEval);
-    const upper13k = capPrice(psa10, psa9, FEE_13K, SETTINGS.targetProfitRate13k);
-    const score = scoreRow({
-      roi13: n(roi13) ?? 0,
-      roi5: n(roi5) ?? 0,
-      trend,
-      liquidity: liq,
-      psaTotal,
-      psaRate,
-      current,
-      avg,
-      shop: shopPrice,
-      recom,
-      psaEval,
-    });
-
-    const totalEval = psaEval === '見送り' ? '見送り' : overall(score);
-    const lock = lockLabel((shopPrice || 0) + FEE_13K);
-
-    out.push({
-      '総合評価': totalEval,
-      '備考': noteText(totalEval, storeEval, psaEval, trend, liq, lock, score),
-      '現在相場': fmtInt(current),
-      '平均相場': fmtInt(avg),
-      'カード': item.strName,
-      '収録パック': (item.arrayCategories && item.arrayCategories[0]) || '',
-      'PSA10売値': fmtInt(psa10),
-      'PSA9売値': fmtInt(psa9),
-      'PSA10枚数': fmtInt(psa10Count),
-      'PSA9枚数': fmtInt(psa9Count),
-      'PSA合計': fmtInt(psaTotal),
-      'PSA10率': psaRate,
-      '2か月見立て': trend,
-      '店頭判断': storeEval,
-      '13k判断': storeEval,
-      '13kROI': roi13,
-      'PSA判断': psaEval,
-      '5k判断': judge5k(n(roi5) ?? 0),
-      '5kROI': roi5,
-      '流動性': liq,
-      '取引件数': String(tradeCount),
-      '総合点': String(score),
-      '資金ロック': lock,
-      '13k仕入れ上限': String(upper13k ?? ''),
-      '5k仕入れ上限': String(capPrice(psa10, psa9, FEE_5K, SETTINGS.targetProfitRate5k) ?? ''),
-      'URL': `https://pokeca-chart.com/gr/${item.strSlug}/`,
-      '画像URL': String(item.strImgUrl || item.img || ''),
-      '__shop_price': String(shopPrice ?? ''),
-      'おすすめの仕入れ値': String(recom ?? ''),
-      '__おすすめの仕入れ値': String(recom ?? ''),
-      '__PSA10差額': String(psa10Diff ?? ''),
-      '__利益率': String(psaProfitRate ?? ''),
-    });
-  }
-
-  process.stdout.write(JSON.stringify(out, null, 2));
+function blendMarketAverage(values) {
+  return trimmedAverage(values);
 }
 
 function chooseShopPrice(shops, current, avg) {
-  const inStock = shops.filter((x) => Number(x.stock) > 0);
-  const pool = inStock.length ? inStock : shops;
-  const prices = pool.map((x) => Number(x.min_price)).filter((x) => x > 0);
+  const prices = extractShopPrices(shops);
   if (!prices.length) return { price: normalizeShopPrice(null, current, avg), tradeCount: 0 };
   const sorted = [...prices].sort((a, b) => a - b);
   let raw = sorted[0];
@@ -374,6 +298,179 @@ function normalizeShopPrice(raw, current, avg) {
   const devAvg = avg && avg > 0 ? Math.abs(shop - avg) / avg : 0;
   if (current && avg && devCurrent > 0.45 && devAvg > 0.45) return Math.round(refAvg);
   return Math.round(shop);
+}
+
+function scoreRow({ roi13, roi5, trend, liquidity, psaTotal, psaRate, current, avg, shop, recom, psaEval }) {
+  let score = 0;
+  if (roi13 >= 30) score += 3;
+  else if (roi13 >= 15) score += 2;
+  else if (roi13 >= 8) score += 1;
+  if (roi5 >= 35) score += 1;
+  if (roi5 >= 20) score += 1;
+  if (trend === '押し目' || trend === '上昇強い') score += 1;
+  if (trend === '下落注意') score -= 1;
+  if (liquidity === '高' || liquidity === '中高') score += 1;
+  if ((n(psaTotal) ?? 0) >= 1000) score += 1;
+  if ((n(psaRate) ?? 0) >= 80) score += 1;
+  if ((n(current) ?? 0) < (n(avg) ?? 0)) score += 1;
+  if ((n(shop) ?? 0) < (n(recom) ?? 0)) score += 1;
+  if (psaEval === '見送り') score -= 4;
+  return score;
+}
+
+function overall(score) {
+  if (score >= 7) return '買い';
+  if (score >= 4) return '条件付き';
+  return '見送り';
+}
+
+function noteText(overallEval, storeEval, psaEval, trend, liquidity, lock, score) {
+  const parts = [];
+  if (overallEval === '買い') parts.push('総合は仕入れ候補');
+  else if (overallEval === '条件付き') parts.push('総合は条件付き');
+  else parts.push('総合は見送り寄り');
+
+  if (storeEval === '可') parts.push('店頭は可');
+  else if (storeEval === '条件付き') parts.push('店頭は条件付き');
+  else parts.push('店頭は見送り');
+
+  parts.push(psaEval === '可' ? 'PSAは利益あり' : 'PSAは見送り');
+
+  if (trend === '押し目') parts.push('2か月見立ては押し目');
+  else if (trend === '横ばい') parts.push('2か月見立ては横ばい');
+  else if (trend === '上昇強い') parts.push('2か月見立ては強い');
+  else parts.push('2か月見立ては下落注意');
+
+  if (score >= 6) parts.push('PSA鑑定数は薄めで値動き荒め');
+  else if (score >= 4) parts.push('PSA鑑定数は標準的');
+  else parts.push('PSA鑑定数は厚めで上値は重め');
+
+  if (lock === '重い') parts.push('資金ロック重い');
+  else if (lock === '重め') parts.push('資金ロック重め');
+  else parts.push('資金ロックは比較的軽い');
+
+  if (liquidity === '高') parts.push('流動性は高い');
+  else if (liquidity === '中高') parts.push('流動性は中高');
+  else parts.push('流動性は中');
+
+  if (overallEval === '条件付き') parts.push('5kだけなら検討余地あり');
+  return parts.join(' / ');
+}
+
+async function main() {
+  const { items } = await fetchItemMap();
+  const map = new Map(items.map((item) => [item.strSlug, item]));
+  const out = [];
+
+  for (const slug of TARGETS) {
+    const item = map.get(slug);
+    if (!item) continue;
+
+    const info = item.arrayPriceInfo || [];
+    const currentInfo = info[0] || {};
+    const psa9Info = info[1] || {};
+    const psa10Info = info[2] || {};
+    const current = n(currentInfo.nPriceRecent) ?? 0;
+    const avgRaw = n(currentInfo.nPriceAvg) ?? 0;
+    const psa9 = n(psa9Info.nPriceRecent) ?? 0;
+    const psa10 = n(psa10Info.nPriceRecent) ?? 0;
+
+    const shopData = await fetchJson(`https://api.pokeca-chart.com/php/get.php?function=get_shop_stock_data&item_id=${item.nItemId}`);
+    const shopUrls = Array.isArray(shopData) ? shopData.map((row) => String(row.url || '')).filter(Boolean) : [];
+    const snkrdunkUrl = shopUrls.find((url) => /snkrdunk\.com\/apparels\/\d+/.test(url)) || '';
+    const snkrdunkA = await fetchSnkrdunkAAverage(snkrdunkUrl, item.strSlug || item.nItemId);
+    const shopPrices = extractShopPrices(Array.isArray(shopData) ? shopData : []);
+    const shopAvg = shopPrices.length ? trimmedAverage(shopPrices) : 0;
+    const avg = blendMarketAverage([current, avgRaw, snkrdunkA, shopAvg]);
+
+    const shopInfo = chooseShopPrice(Array.isArray(shopData) ? shopData : [], current, avg);
+    const shopPrice = shopInfo.price;
+    const tradeCount = shopInfo.tradeCount;
+
+    const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
+    let grd = [];
+    try {
+      grd = JSON.parse(grdText);
+    } catch {
+      grd = [];
+    }
+    const grdInfo = grd[0] || {};
+    const psa10Count = n(grdInfo.grd_status_10) ?? n(item.nPSA10Num) ?? '';
+    const psa9Count = n(grdInfo.grd_status_9) ?? '';
+    const psaTotal = n(grdInfo.grd_status_all) ?? '';
+    const psaRate = psa10Count && psaTotal ? fmtNum((psa10Count / psaTotal) * 100, 1) : '';
+
+    const trend = trendLabel(currentInfo.fRiseFallRate7, currentInfo.fRiseFallRate30);
+    const liq = liquidityLabel(item.nPv, item.nVolume);
+    const roi13 = shopPrice ? fmtNum((((psa10 + psa9) / 2 - shopPrice - FEE_13K) / (shopPrice + FEE_13K)) * 100, 1) : '';
+    const roi5 = shopPrice ? fmtNum((((psa10 + psa9) / 2 - shopPrice - FEE_5K) / (shopPrice + FEE_5K)) * 100, 1) : '';
+
+    const storeEval = judge13k(n(roi13) ?? 0, trend, liq);
+    const psa10Diff = psa10 ? Math.round(psa10 - (shopPrice || 0) - FEE_13K) : '';
+    const psaProfitRate = shopPrice ? fmtNum((psa10Diff / ((shopPrice || 0) + FEE_13K)) * 100, 1) : '';
+    const psaEval = psaJudge(psa10Diff, psaProfitRate);
+    const recom = recomPrice(psa10, psa9, storeEval);
+    const upper13k = capPrice(psa10, psa9, FEE_13K, SETTINGS.targetProfitRate13k);
+    const storeDecision = storeJudge(shopPrice, recom, upper13k);
+    const score = scoreRow({
+      roi13: n(roi13) ?? 0,
+      roi5: n(roi5) ?? 0,
+      trend,
+      liquidity: liq,
+      psaTotal,
+      psaRate,
+      current,
+      avg,
+      shop: shopPrice,
+      recom,
+      psaEval,
+    });
+
+    const totalEval = psaEval === '見送り' ? '見送り' : overall(score);
+    const lock = lockLabel((shopPrice || 0) + FEE_13K);
+
+    out.push({
+      '総合評価': totalEval,
+      '備考': noteText(totalEval, storeDecision, psaEval, trend, liq, lock, score),
+      '現在相場': fmtInt(current),
+      '平均相場': fmtInt(avg),
+      'SNKRDUNK_A': fmtInt(snkrdunkA),
+      'SHOP_AVG': fmtInt(shopAvg),
+      'カード': item.strName,
+      '収録パック': (item.arrayCategories && item.arrayCategories[0]) || '',
+      'PSA10売値': fmtInt(psa10),
+      'PSA9売値': fmtInt(psa9),
+      'PSA10枚数': fmtInt(psa10Count),
+      'PSA9枚数': fmtInt(psa9Count),
+      'PSA総数': fmtInt(psaTotal),
+      'PSA10率': psaRate,
+      '2か月見立て': trend,
+      '店頭可否': storeDecision,
+      '店頭判断': storeDecision,
+      '13k判断': storeEval,
+      '13kROI': roi13,
+      'PSA可否': psaEval,
+      'PSA判断': psaEval,
+      '5k判断': judge5k(n(roi5) ?? 0),
+      '5kROI': roi5,
+      '流動性': liq,
+      '取引件数': String(tradeCount),
+      '総合点': String(score),
+      '資金ロック': lock,
+      '13k仕入れ上限': String(upper13k ?? ''),
+      '5k仕入れ上限': String(capPrice(psa10, psa9, FEE_5K, SETTINGS.targetProfitRate5k) ?? ''),
+      'URL': `https://pokeca-chart.com/gr/${item.strSlug}/`,
+      '画像URL': String(item.strImgUrl || item.img || ''),
+      '__shop_price': String(shopPrice ?? ''),
+      '__snkrdunkA': String(snkrdunkA ?? ''),
+      'おすすめの仕入れ値': String(recom ?? ''),
+      '__おすすめの仕入れ値': String(recom ?? ''),
+      '__PSA10差額': String(psa10Diff ?? ''),
+      '__利益率': String(psaProfitRate ?? ''),
+    });
+  }
+
+  process.stdout.write(JSON.stringify(out, null, 2));
 }
 
 main().catch((err) => {
