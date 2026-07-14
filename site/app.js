@@ -116,12 +116,23 @@
     return `${STORE_KEY}:${String(row['URL'] || '')}`;
   }
 
+  function legacyPriceKey(row) {
+    const url = String(row['URL'] || '');
+    if (!url.startsWith('https://pokeca-chart.com/gr/')) return '';
+    const legacy = url.replace('https://pokeca-chart.com/gr/', 'https://toreca-souba.com/cards/').replace(/\/$/, '');
+    return `${STORE_KEY}:${legacy}`;
+  }
+
   function getManualStorePrice(row) {
     try {
-      const saved = localStorage.getItem(priceKey(row));
-      if (!saved) return null;
-      const parsed = num(saved);
-      return parsed > 0 ? parsed : null;
+      const keys = [priceKey(row), legacyPriceKey(row)].filter(Boolean);
+      for (const key of keys) {
+        const saved = localStorage.getItem(key);
+        if (!saved) continue;
+        const parsed = num(saved);
+        if (parsed > 0) return parsed;
+      }
+      return null;
     } catch (_) {
       return null;
     }
@@ -130,14 +141,21 @@
   function saveManualStorePrice(row, raw) {
     try {
       const key = priceKey(row);
+      const legacyKey = legacyPriceKey(row);
       const value = String(raw ?? '').trim();
       if (!value) {
         localStorage.removeItem(key);
+        if (legacyKey) localStorage.removeItem(legacyKey);
         return;
       }
       const parsed = num(value);
-      if (parsed > 0) localStorage.setItem(key, String(Math.round(parsed)));
-      else localStorage.removeItem(key);
+      if (parsed > 0) {
+        localStorage.setItem(key, String(Math.round(parsed)));
+        if (legacyKey) localStorage.removeItem(legacyKey);
+      } else {
+        localStorage.removeItem(key);
+        if (legacyKey) localStorage.removeItem(legacyKey);
+      }
     } catch (_) {}
   }
 
