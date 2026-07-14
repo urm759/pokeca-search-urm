@@ -34,11 +34,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "19100",
     "5k仕入れ上限": "28500",
     "URL": "https://pokeca-chart.com/gr/261-sv-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/261-sv-p-medium.webp",
     "__shop_price": "12880",
     "__おすすめの仕入れ値": "17200",
     "__PSA10差額": "39120",
-    "__利益率": "151.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/261-sv-p.webp"
+    "__利益率": "151.2"
   },
   {
     "総合評価": "買い",
@@ -67,11 +67,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "10900",
     "5k仕入れ上限": "19900",
     "URL": "https://pokeca-chart.com/gr/260-sv-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/260-sv-p-medium.webp",
     "__shop_price": "11700",
     "__おすすめの仕入れ値": "9300",
     "__PSA10差額": "21044",
-    "__利益率": "85.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/260-sv-p.webp"
+    "__利益率": "85.2"
   },
   {
     "総合評価": "買い",
@@ -100,11 +100,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "45600",
     "5k仕入れ上限": "56100",
     "URL": "https://pokeca-chart.com/gr/m5-114-081/",
+    "画像URL": "https://api.pokeca-chart.com/img/m5-114-081-medium.webp",
     "__shop_price": "34000",
     "__おすすめの仕入れ値": "39200",
     "__PSA10差額": "70600",
-    "__利益率": "150.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m5-114-081.webp"
+    "__利益率": "150.2"
   },
   {
     "総合評価": "買い",
@@ -133,11 +133,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "89700",
     "5k仕入れ上限": "102200",
     "URL": "https://pokeca-chart.com/gr/m2-110-080/",
+    "画像URL": "https://api.pokeca-chart.com/img/m2-110-080-medium.webp",
     "__shop_price": "92000",
     "__おすすめの仕入れ値": "77200",
     "__PSA10差額": "61550",
-    "__利益率": "58.6",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m2-110-080.webp"
+    "__利益率": "58.6"
   },
   {
     "総合評価": "条件付き",
@@ -166,11 +166,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "20700",
     "5k仕入れ上限": "30200",
     "URL": "https://pokeca-chart.com/gr/m2a-246-193/",
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-246-193-medium.webp",
     "__shop_price": "26000",
     "__おすすめの仕入れ値": "16200",
     "__PSA10差額": "18350",
-    "__利益率": "47.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m2a-246-193.webp"
+    "__利益率": "47.1"
   },
   {
     "総合評価": "買い",
@@ -199,11 +199,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "35700",
     "5k仕入れ上限": "45800",
     "URL": "https://pokeca-chart.com/gr/m2a-234-193/",
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-234-193-medium.webp",
     "__shop_price": "33000",
     "__おすすめの仕入れ値": "28500",
     "__PSA10差額": "42578",
-    "__利益率": "92.6",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m2a-234-193.webp"
+    "__利益率": "92.6"
   },
   {
     "総合評価": "買い",
@@ -232,11 +232,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "46900",
     "5k仕入れ上限": "57500",
     "URL": "https://pokeca-chart.com/gr/m2a-240-193/",
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-240-193-medium.webp",
     "__shop_price": "46500",
     "__おすすめの仕入れ値": "37500",
     "__PSA10差額": "40220",
-    "__利益率": "67.6",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m2a-240-193.webp"
+    "__利益率": "67.6"
   },
   {
     "総合評価": "条件付き",
@@ -265,11 +265,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "24100",
     "5k仕入れ上限": "33700",
     "URL": "https://pokeca-chart.com/gr/m4-114-083/",
+    "画像URL": "https://api.pokeca-chart.com/img/m4-114-083-medium.webp",
     "__shop_price": "31800",
     "__おすすめの仕入れ値": "18100",
     "__PSA10差額": "16200",
-    "__利益率": "36.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m4-114-083.webp"
+    "__利益率": "36.2"
   },
   {
     "総合評価": "買い",
@@ -298,11 +298,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "11300",
     "5k仕入れ上限": "20400",
     "URL": "https://pokeca-chart.com/gr/m3-115-080/",
+    "画像URL": "https://api.pokeca-chart.com/img/m3-115-080-medium.webp",
     "__shop_price": "12000",
     "__おすすめの仕入れ値": "9100",
     "__PSA10差額": "23332",
-    "__利益率": "93.3",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m3-115-080.webp"
+    "__利益率": "93.3"
   },
   {
     "総合評価": "条件付き",
@@ -331,11 +331,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "52700",
     "5k仕入れ上限": "63500",
     "URL": "https://pokeca-chart.com/gr/sv11b-174-086/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv11b-174-086-medium.webp",
     "__shop_price": "56000",
     "__おすすめの仕入れ値": "41100",
     "__PSA10差額": "40500",
-    "__利益率": "58.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv11b-174-086.webp"
+    "__利益率": "58.7"
   },
   {
     "総合評価": "条件付き",
@@ -364,11 +364,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "54900",
     "5k仕入れ上限": "65900",
     "URL": "https://pokeca-chart.com/gr/sv11w-174-086/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv11w-174-086-medium.webp",
     "__shop_price": "60800",
     "__おすすめの仕入れ値": "43900",
     "__PSA10差額": "39200",
-    "__利益率": "53.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv11w-174-086.webp"
+    "__利益率": "53.1"
   },
   {
     "総合評価": "買い",
@@ -397,11 +397,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "109400",
     "5k仕入れ上限": "122700",
     "URL": "https://pokeca-chart.com/gr/288-sv-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/288-sv-p-medium.webp",
     "__shop_price": "99800",
     "__おすすめの仕入れ値": "94100",
     "__PSA10差額": "120867",
-    "__利益率": "107.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/288-sv-p.webp"
+    "__利益率": "107.2"
   },
   {
     "総合評価": "条件付き",
@@ -430,11 +430,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "51400",
     "5k仕入れ上限": "62200",
     "URL": "https://pokeca-chart.com/gr/sv10-125-098/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv10-125-098-medium.webp",
     "__shop_price": "60800",
     "__おすすめの仕入れ値": "40100",
     "__PSA10差額": "36200",
-    "__利益率": "49.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv10-125-098.webp"
+    "__利益率": "49.1"
   },
   {
     "総合評価": "条件付き",
@@ -463,11 +463,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "50500",
     "5k仕入れ上限": "61300",
     "URL": "https://pokeca-chart.com/gr/sv8a-217-187/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv8a-217-187-medium.webp",
     "__shop_price": "57500",
     "__おすすめの仕入れ値": "40400",
     "__PSA10差額": "31500",
-    "__利益率": "44.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv8a-217-187.webp"
+    "__利益率": "44.7"
   },
   {
     "総合評価": "条件付き",
@@ -496,11 +496,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "59100",
     "5k仕入れ上限": "70200",
     "URL": "https://pokeca-chart.com/gr/sv8-132-106/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv8-132-106-medium.webp",
     "__shop_price": "65000",
     "__おすすめの仕入れ値": "47300",
     "__PSA10差額": "44975",
-    "__利益率": "57.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv8-132-106.webp"
+    "__利益率": "57.7"
   },
   {
     "総合評価": "見送り",
@@ -529,11 +529,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "24600",
     "5k仕入れ上限": "34300",
     "URL": "https://pokeca-chart.com/gr/sv5a-090-066/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv5a-090-066-medium.webp",
     "__shop_price": "37800",
     "__おすすめの仕入れ値": "18500",
     "__PSA10差額": "12200",
-    "__利益率": "24",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv5a-090-066.webp"
+    "__利益率": "24"
   },
   {
     "総合評価": "見送り",
@@ -562,11 +562,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "57200",
     "5k仕入れ上限": "68200",
     "URL": "https://pokeca-chart.com/gr/sv2a-201-165/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv2a-201-165-medium.webp",
     "__shop_price": "70800",
     "__おすすめの仕入れ値": "44600",
     "__PSA10差額": "33400",
-    "__利益率": "39.9",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv2a-201-165.webp"
+    "__利益率": "39.9"
   },
   {
     "総合評価": "条件付き",
@@ -595,11 +595,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "48000",
     "5k仕入れ上限": "58700",
     "URL": "https://pokeca-chart.com/gr/wcs23-001-030/",
+    "画像URL": "https://api.pokeca-chart.com/img/wcs23-001-030-medium.webp",
     "__shop_price": "52800",
     "__おすすめの仕入れ値": "37500",
     "__PSA10差額": "36690",
-    "__利益率": "55.8",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/wcs23-001-030.webp"
+    "__利益率": "55.8"
   },
   {
     "総合評価": "条件付き",
@@ -628,11 +628,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "42200",
     "5k仕入れ上限": "52600",
     "URL": "https://pokeca-chart.com/gr/s12a-205-172/",
+    "画像URL": "https://api.pokeca-chart.com/img/s12a-205-172-medium.webp",
     "__shop_price": "47800",
     "__おすすめの仕入れ値": "33800",
     "__PSA10差額": "35689",
-    "__利益率": "58.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s12a-205-172.webp"
+    "__利益率": "58.7"
   },
   {
     "総合評価": "条件付き",
@@ -661,11 +661,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "49100",
     "5k仕入れ上限": "59800",
     "URL": "https://pokeca-chart.com/gr/323-s-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/323-s-p-medium.webp",
     "__shop_price": "60000",
     "__おすすめの仕入れ値": "38300",
     "__PSA10差額": "45633",
-    "__利益率": "62.5",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/323-s-p.webp"
+    "__利益率": "62.5"
   },
   {
     "総合評価": "条件付き",
@@ -694,11 +694,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "17200",
     "5k仕入れ上限": "26500",
     "URL": "https://pokeca-chart.com/gr/208-s-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/208-s-p-medium.webp",
     "__shop_price": "19800",
     "__おすすめの仕入れ値": "13400",
     "__PSA10差額": "26620",
-    "__利益率": "81.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/208-s-p.webp"
+    "__利益率": "81.2"
   },
   {
     "総合評価": "条件付き",
@@ -727,11 +727,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "62700",
     "5k仕入れ上限": "74000",
     "URL": "https://pokeca-chart.com/gr/sv4a-347-190/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv4a-347-190-medium.webp",
     "__shop_price": "64800",
     "__おすすめの仕入れ値": "53900",
     "__PSA10差額": "62950",
-    "__利益率": "80.9",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv4a-347-190.webp"
+    "__利益率": "80.9"
   },
   {
     "総合評価": "買い",
@@ -760,11 +760,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "24700",
     "5k仕入れ上限": "34300",
     "URL": "https://pokeca-chart.com/gr/098-sv-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/098-sv-p-medium.webp",
     "__shop_price": "27800",
     "__おすすめの仕入れ値": "19800",
     "__PSA10差額": "32366",
-    "__利益率": "79.3",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/098-sv-p.webp"
+    "__利益率": "79.3"
   },
   {
     "総合評価": "買い",
@@ -793,11 +793,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "33300",
     "5k仕入れ上限": "43400",
     "URL": "https://pokeca-chart.com/gr/sv3-134-108/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv3-134-108-medium.webp",
     "__shop_price": "33000",
     "__おすすめの仕入れ値": "26700",
     "__PSA10差額": "37900",
-    "__利益率": "82.4",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv3-134-108.webp"
+    "__利益率": "82.4"
   },
   {
     "総合評価": "条件付き",
@@ -826,11 +826,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "11600",
     "5k仕入れ上限": "20700",
     "URL": "https://pokeca-chart.com/gr/m2a-237-193/",
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-237-193-medium.webp",
     "__shop_price": "15500",
     "__おすすめの仕入れ値": "9000",
     "__PSA10差額": "18033",
-    "__利益率": "63.3",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m2a-237-193.webp"
+    "__利益率": "63.3"
   },
   {
     "総合評価": "買い",
@@ -859,11 +859,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "52100",
     "5k仕入れ上限": "62900",
     "URL": "https://pokeca-chart.com/gr/s8a-007-025/",
+    "画像URL": "https://api.pokeca-chart.com/img/s8a-007-025-medium.webp",
     "__shop_price": "52800",
     "__おすすめの仕入れ値": "41700",
     "__PSA10差額": "54200",
-    "__利益率": "82.4",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s8a-007-025.webp"
+    "__利益率": "82.4"
   },
   {
     "総合評価": "買い",
@@ -892,11 +892,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "38600",
     "5k仕入れ上限": "48800",
     "URL": "https://pokeca-chart.com/gr/sv2a-205-165/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv2a-205-165-medium.webp",
     "__shop_price": "37000",
     "__おすすめの仕入れ値": "30900",
     "__PSA10差額": "44833",
-    "__利益率": "89.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv2a-205-165.webp"
+    "__利益率": "89.7"
   },
   {
     "総合評価": "条件付き",
@@ -925,11 +925,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "30200",
     "5k仕入れ上限": "40100",
     "URL": "https://pokeca-chart.com/gr/sv4a-349-190/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv4a-349-190-medium.webp",
     "__shop_price": "36000",
     "__おすすめの仕入れ値": "23600",
     "__PSA10差額": "22567",
-    "__利益率": "46.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv4a-349-190.webp"
+    "__利益率": "46.1"
   },
   {
     "総合評価": "条件付き",
@@ -958,11 +958,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "3800",
     "5k仕入れ上限": "12500",
     "URL": "https://pokeca-chart.com/gr/140-s-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/140-s-p-medium.webp",
     "__shop_price": "7900",
     "__おすすめの仕入れ値": "2900",
     "__PSA10差額": "14452",
-    "__利益率": "69.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/140-s-p.webp"
+    "__利益率": "69.1"
   },
   {
     "総合評価": "条件付き",
@@ -991,11 +991,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "10900",
     "5k仕入れ上限": "19900",
     "URL": "https://pokeca-chart.com/gr/289-sv-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/289-sv-p-medium.webp",
     "__shop_price": "14800",
     "__おすすめの仕入れ値": "8500",
     "__PSA10差額": "15354",
-    "__利益率": "55.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/289-sv-p.webp"
+    "__利益率": "55.2"
   },
   {
     "総合評価": "条件付き",
@@ -1024,11 +1024,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "64100",
     "5k仕入れ上限": "75400",
     "URL": "https://pokeca-chart.com/gr/s8a-p-001-025/",
+    "画像URL": "https://api.pokeca-chart.com/img/s8a-p-001-025-medium.webp",
     "__shop_price": "67800",
     "__おすすめの仕入れ値": "50000",
     "__PSA10差額": "54200",
-    "__利益率": "67.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s8a-p-001-025.webp"
+    "__利益率": "67.1"
   },
   {
     "総合評価": "見送り",
@@ -1057,11 +1057,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "44600",
     "5k仕入れ上限": "55100",
     "URL": "https://pokeca-chart.com/gr/s4-114-100/",
+    "画像URL": "https://api.pokeca-chart.com/img/s4-114-100-medium.webp",
     "__shop_price": "53000",
     "__おすすめの仕入れ値": "34800",
     "__PSA10差額": "48333",
-    "__利益率": "73.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s4-114-100.webp"
+    "__利益率": "73.2"
   },
   {
     "総合評価": "条件付き",
@@ -1090,11 +1090,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "48800",
     "5k仕入れ上限": "59400",
     "URL": "https://pokeca-chart.com/gr/sv2a-025-165/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv2a-025-165-medium.webp",
     "__shop_price": "69800",
     "__おすすめの仕入れ値": "36600",
     "__PSA10差額": "43200",
-    "__利益率": "52.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv2a-025-165.webp"
+    "__利益率": "52.2"
   },
   {
     "総合評価": "買い",
@@ -1123,11 +1123,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "86200",
     "5k仕入れ上限": "98500",
     "URL": "https://pokeca-chart.com/gr/m4-120-083/",
+    "画像URL": "https://api.pokeca-chart.com/img/m4-120-083-medium.webp",
     "__shop_price": "75000",
     "__おすすめの仕入れ値": "74100",
     "__PSA10差額": "112000",
-    "__利益率": "127.3",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m4-120-083.webp"
+    "__利益率": "127.3"
   },
   {
     "総合評価": "買い",
@@ -1156,11 +1156,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "56600",
     "5k仕入れ上限": "67700",
     "URL": "https://pokeca-chart.com/gr/m1s-092-063/",
+    "画像URL": "https://api.pokeca-chart.com/img/m1s-092-063-medium.webp",
     "__shop_price": "37800",
     "__おすすめの仕入れ値": "48700",
     "__PSA10差額": "81297",
-    "__利益率": "160",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m1s-092-063.webp"
+    "__利益率": "160"
   },
   {
     "総合評価": "条件付き",
@@ -1189,11 +1189,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "20500",
     "5k仕入れ上限": "30000",
     "URL": "https://pokeca-chart.com/gr/s9-103-100/",
+    "画像URL": "https://api.pokeca-chart.com/img/s9-103-100-medium.webp",
     "__shop_price": "24800",
     "__おすすめの仕入れ値": "16000",
     "__PSA10差額": "23700",
-    "__利益率": "62.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s9-103-100.webp"
+    "__利益率": "62.7"
   },
   {
     "総合評価": "見送り",
@@ -1222,11 +1222,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "38900",
     "5k仕入れ上限": "49200",
     "URL": "https://pokeca-chart.com/gr/381-s-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/381-s-p-medium.webp",
     "__shop_price": "52800",
     "__おすすめの仕入れ値": "29200",
     "__PSA10差額": "18800",
-    "__利益率": "28.6",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/381-s-p.webp"
+    "__利益率": "28.6"
   },
   {
     "総合評価": "見送り",
@@ -1255,11 +1255,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "16600",
     "5k仕入れ上限": "25900",
     "URL": "https://pokeca-chart.com/gr/s8-106-100/",
+    "画像URL": "https://api.pokeca-chart.com/img/s8-106-100-medium.webp",
     "__shop_price": "23000",
     "__おすすめの仕入れ値": "12400",
     "__PSA10差額": "17000",
-    "__利益率": "47.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s8-106-100.webp"
+    "__利益率": "47.2"
   },
   {
     "総合評価": "見送り",
@@ -1288,11 +1288,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "44800",
     "5k仕入れ上限": "55400",
     "URL": "https://pokeca-chart.com/gr/s6a-085-069/",
+    "画像URL": "https://api.pokeca-chart.com/img/s6a-085-069-medium.webp",
     "__shop_price": "52000",
     "__おすすめの仕入れ値": "35000",
     "__PSA10差額": "33833",
-    "__利益率": "52.1",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s6a-085-069.webp"
+    "__利益率": "52.1"
   },
   {
     "総合評価": "見送り",
@@ -1321,11 +1321,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "31600",
     "5k仕入れ上限": "41500",
     "URL": "https://pokeca-chart.com/gr/s5a-078-070/",
+    "画像URL": "https://api.pokeca-chart.com/img/s5a-078-070-medium.webp",
     "__shop_price": "40500",
     "__おすすめの仕入れ値": "24600",
     "__PSA10差額": "16499",
-    "__利益率": "30.8",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s5a-078-070.webp"
+    "__利益率": "30.8"
   },
   {
     "総合評価": "見送り",
@@ -1354,11 +1354,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "22300",
     "5k仕入れ上限": "31800",
     "URL": "https://pokeca-chart.com/gr/123-s-p/",
+    "画像URL": "https://api.pokeca-chart.com/img/123-s-p-medium.webp",
     "__shop_price": "34800",
     "__おすすめの仕入れ値": "16700",
     "__PSA10差額": "18800",
-    "__利益率": "39.3",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/123-s-p.webp"
+    "__利益率": "39.3"
   },
   {
     "総合評価": "買い",
@@ -1387,11 +1387,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "32100",
     "5k仕入れ上限": "42100",
     "URL": "https://pokeca-chart.com/gr/s8a-030-028/",
+    "画像URL": "https://api.pokeca-chart.com/img/s8a-030-028-medium.webp",
     "__shop_price": "24800",
     "__おすすめの仕入れ値": "28900",
     "__PSA10差額": "50199",
-    "__利益率": "132.8",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s8a-030-028.webp"
+    "__利益率": "132.8"
   },
   {
     "総合評価": "買い",
@@ -1420,11 +1420,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "19400",
     "5k仕入れ上限": "28800",
     "URL": "https://pokeca-chart.com/gr/sv6-130-101/",
+    "画像URL": "https://api.pokeca-chart.com/img/sv6-130-101-medium.webp",
     "__shop_price": "17800",
     "__おすすめの仕入れ値": "15500",
     "__PSA10差額": "35033",
-    "__利益率": "113.7",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/sv6-130-101.webp"
+    "__利益率": "113.7"
   },
   {
     "総合評価": "見送り",
@@ -1453,11 +1453,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "14300",
     "5k仕入れ上限": "23500",
     "URL": "https://pokeca-chart.com/gr/s6a-081-069/",
+    "画像URL": "https://api.pokeca-chart.com/img/s6a-081-069-medium.webp",
     "__shop_price": "25000",
     "__おすすめの仕入れ値": "10700",
     "__PSA10差額": "11000",
-    "__利益率": "28.9",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/s6a-081-069.webp"
+    "__利益率": "28.9"
   },
   {
     "総合評価": "買い",
@@ -1486,11 +1486,11 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "35000",
     "5k仕入れ上限": "45000",
     "URL": "https://pokeca-chart.com/gr/m2a-250-193/",
+    "画像URL": "https://api.pokeca-chart.com/img/m2a-250-193-medium.webp",
     "__shop_price": "28000",
     "__おすすめの仕入れ値": "30100",
     "__PSA10差額": "51760",
-    "__利益率": "126.2",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/m2a-250-193.webp"
+    "__利益率": "126.2"
   },
   {
     "総合評価": "条件付き",
@@ -1519,10 +1519,10 @@ window.POKECA_DATA = [
     "13k仕入れ上限": "8700",
     "5k仕入れ上限": "17600",
     "URL": "https://pokeca-chart.com/gr/cll-008-032/",
+    "画像URL": "https://api.pokeca-chart.com/img/cll-008-032-medium.webp",
     "__shop_price": "13333",
     "__おすすめの仕入れ値": "6500",
     "__PSA10差額": "16817",
-    "__利益率": "63.9",
-    "画像URL": "https://pub-8c3b3a58e57f45c9a1d47c28200ebfa4.r2.dev/img_snk/cll-008-032.webp"
+    "__利益率": "63.9"
   }
 ];
