@@ -332,6 +332,7 @@ async function main() {
       'URL': `https://pokeca-chart.com/gr/${item.strSlug}/`,
       '画像URL': String(item.strImgUrl || item.img || ''),
       '__shop_price': String(shopPrice ?? ''),
+      'おすすめの仕入れ値': String(recom ?? ''),
       '__おすすめの仕入れ値': String(recom ?? ''),
       '__PSA10差額': String(psa10Diff ?? ''),
       '__利益率': String(psaProfitRate ?? ''),
