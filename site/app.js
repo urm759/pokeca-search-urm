@@ -248,7 +248,7 @@
     const shopPrice = effectiveShopPrice(row, manualShopPrice);
     const buyable = isBuyable(row, shopPrice);
     const psa10 = num(row['PSA10売値']);
-    const psa9 = psa9PriceFromShop(shopPrice);
+    const psa9 = num(row['PSA9売値']);
     const rowClass = [
       'row',
       row['総合評価'] === '買い' ? 'row-good' : row['総合評価'] === '条件付き' ? 'row-warn' : 'row-bad',
@@ -287,6 +287,7 @@
         <div class="meta-grid">
           <div class="kv"><span class="k">PSA10売値</span><span class="v">${yen(psa10)}</span></div>
           <div class="kv"><span class="k">PSA9売値</span><span class="v">${yen(psa9)}</span></div>
+          <div class="kv"><span class="k">PSA9ソース</span><span class="v">${escapeHtml(row['PSA9ソース'] || '-')}</span></div>
           <div class="kv"><span class="k">13k仕入れ上限</span><span class="v">${yen(row['13k仕入れ上限'])}</span></div>
           <div class="kv"><span class="k">5k仕入れ上限</span><span class="v">${yen(row['5k仕入れ上限'])}</span></div>
           <div class="kv"><span class="k">13kROI</span><span class="v">${pct(row['13kROI'])}</span></div>
