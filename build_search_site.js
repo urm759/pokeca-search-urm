@@ -420,7 +420,7 @@ async function fetchSnkrdunkAAverage(snkrdunkUrl, cacheKey) {
 async function normalizeRecord(item) {
   const toreca = await fetchTorecaMarketDetails(item);
   const snkrdunkA = await fetchSnkrdunkAAverage(toreca.snkrdunkUrl, item.id);
-  const currentPrice = num(snkrdunkA || toreca.torecaA || toreca.beautyPrice || item.snkPrice || item.price);
+  const currentPrice = num(item.price || item.snkPrice);
   const avgPrice = num(item.price || item.snkPrice || currentPrice);
   const psa10 = num(item.snkPsa10Price);
   const listings = num(item.snkListings);
@@ -483,7 +483,7 @@ async function normalizeRecord(item) {
     '5k仕入れ上限': fmtInt(upper5k),
     'PSA10差額': psaDiff,
     '利益率': psaProfitRate,
-    'URL': `https://toreca-souba.com/cards/${item.id}`,
+    'URL': `https://pokeca-chart.com/gr/${item.id}/`,
     '画像URL': item.img || '',
     'SNKRDUNK_A': fmtInt(snkrdunkA),
     '__sourcePrice': fmtInt(currentPrice),
@@ -491,7 +491,7 @@ async function normalizeRecord(item) {
     '__snkrdunkA': fmtInt(snkrdunkA),
     '__torecaA': fmtInt(toreca.torecaA),
     '__beautyPrice': fmtInt(toreca.beautyPrice),
-    '__priceSource': snkrdunkA ? 'SNKRDUNK_A' : toreca.torecaA ? 'TORECA_A' : toreca.beautyPrice ? 'BEAUTY' : 'CURRENT',
+    '__priceSource': currentPrice ? 'ITEM_PRICE' : 'CURRENT',
     '__storeJudge': storeJudge,
     '__psaJudge': psaJudge,
   };
