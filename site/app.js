@@ -249,6 +249,8 @@
     const buyable = isBuyable(row, shopPrice);
     const psa10 = num(row['PSA10売値']);
     const psa9 = num(row['PSA9売値']);
+    const ebayUrl = row['eBayURL'] || '';
+    const tcgUrl = row['TCGplayerURL'] || '';
     const rowClass = [
       'row',
       row['総合評価'] === '買い' ? 'row-good' : row['総合評価'] === '条件付き' ? 'row-warn' : 'row-bad',
@@ -308,6 +310,14 @@
             ${badge(`平均比 ${avgSignal(row)}`, 'b-info')}
             ${badge(`PSA可否 ${row['PSA可否'] || row['PSA判断'] || '-'}`, toneFor(row['PSA可否'] || row['PSA判断']))}
           </div>
+          <details class="market-panel">
+            <summary>海外相場</summary>
+            <div class="market-links">
+              ${ebayUrl ? `<a class="market-link" href="${escapeHtml(ebayUrl)}" target="_blank" rel="noopener noreferrer">eBay</a>` : ''}
+              ${tcgUrl ? `<a class="market-link" href="${escapeHtml(tcgUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer</a>` : ''}
+            </div>
+            ${tcgUrl ? `<iframe class="market-frame" src="${escapeHtml(tcgUrl)}" loading="lazy" referrerpolicy="no-referrer"></iframe>` : ''}
+          </details>
           <a class="link" href="${escapeHtml(row['URL'] || '#')}" target="_blank" rel="noopener noreferrer">開く</a>
         </div>
       </article>
