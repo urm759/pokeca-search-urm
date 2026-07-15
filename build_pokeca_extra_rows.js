@@ -256,6 +256,297 @@ function resolvePsa9Price(psa9Raw, snkrdunkA, shopPrice) {
   return { value: 0, source: '不明' };
 }
 
+const PACK_ENGLISH_MAP = {
+  'SV プロモーションカード': 'SV Promo Cards',
+  'S プロモーションカード': 'S Promo Cards',
+  'SM プロモーションカード': 'SM Promo Cards',
+  '25th ANNIVERSARY COLLECTION': '25th Anniversary Collection',
+  'ポケモンカード151': 'Pokémon Card 151',
+  'VSTARユニバース': 'VSTAR Universe',
+  'シャイニートレジャーex': 'Shiny Treasure ex',
+  '黒炎の支配者': 'Ruler of the Black Flame',
+  '仰天のボルテッカー': 'Amazing Volt Tackle',
+  'スターバース': 'Star Birth',
+  'フュージョンアーツ': 'Fusion Arts',
+  'イーブイヒーローズ': 'Eevee Heroes',
+  '双璧のファイター': 'Twin Fighters',
+  '変幻の仮面': 'Mask of Change',
+  '超電ブレイカー': 'Super Electric Breaker',
+  'クリムゾンヘイズ': 'Crimson Haze',
+  'テラスタルフェスex': 'Terastal Festival ex',
+  'メガシンフォニア': 'Mega Symphonia',
+  'メガブレイブ': 'Mega Brave',
+  'MEGAドリームex': 'MEGA Dream ex',
+  'ロケット団の栄光': 'Glory of Team Rocket',
+  'ブラックボルト': 'Black Bolt',
+  'ホワイトフレア': 'White Flare',
+  'ニンジャスピナー': 'Ninja Spinner',
+  'ムニキスゼロ': 'Munikis Zero',
+  'アビスアイ': 'Abyss Eye',
+  'インフェルノX': 'Inferno X',
+  'WCS23横浜 記念デッキ': 'WCS23 Yokohama Commemorative Deck',
+  'ポケモンカードゲーム Classic': 'Pokémon Card Game Classic',
+  'スタートデッキ100 バトルコレクション': 'Start Deck 100 Battle Collection',
+  'メガブレイブ': 'Mega Brave',
+  'メガシンフォニア': 'Mega Symphonia',
+};
+
+const NAME_REPLACEMENTS = [
+  ['ロケット団の', "Rocket's "],
+  ['名探偵', 'Detective '],
+  ['メガ', 'Mega '],
+  ['ピカチュウ', 'Pikachu'],
+  ['リザードン', 'Charizard'],
+  ['カイリュー', 'Dragonite'],
+  ['ゲンガー', 'Gengar'],
+  ['ダークライ', 'Darkrai'],
+  ['ゼクロム', 'Zekrom'],
+  ['レシラム', 'Reshiram'],
+  ['ビクティニ', 'Victini'],
+  ['ミュウツー', 'Mewtwo'],
+  ['ミュウ', 'Mew'],
+  ['イーブイ', 'Eevee'],
+  ['ニンフィア', 'Sylveon'],
+  ['ブラッキー', 'Umbreon'],
+  ['サーナイト', 'Gardevoir'],
+  ['ゲッコウガ', 'Greninja'],
+  ['バンギラス', 'Tyranitar'],
+  ['ギャラドス', 'Gyarados'],
+  ['ギラティナ', 'Giratina'],
+  ['ルカリオ', 'Lucario'],
+  ['ジュラルドン', 'Duraludon'],
+  ['サーフゴー', 'Gholdengo'],
+  ['オーガポン', 'Ogerpon'],
+  ['カミツオロチ', 'Hydrapple'],
+  ['キチキギス', 'Fezandipiti'],
+  ['イダイナキバ', 'Great Tusk'],
+  ['テツノカイナ', 'Iron Hands'],
+  ['テツノブジン', 'Iron Valiant'],
+  ['テツノイバラ', 'Iron Thorns'],
+  ['テツノドクガ', 'Iron Moth'],
+  ['テツノツツミ', 'Iron Bundle'],
+  ['メガリザードンX', 'Mega Charizard X'],
+  ['メガカイリュー', 'Mega Dragonite'],
+  ['メガゲンガー', 'Mega Gengar'],
+  ['メガダークライ', 'Mega Darkrai'],
+];
+
+const NAME_EXACT_OVERRIDES = new Map([
+  ['マリィ', 'Marnie'],
+  ['リーリエ', 'Lillie'],
+  ['リーリエの決心', "Lillie's Determination"],
+  ['リーリエのピッピ', "Lillie's Clefairy"],
+  ['リーリエのピッピ ex', "Lillie's Clefairy ex"],
+  ['リーリエのピッピex', "Lillie's Clefairy ex"],
+  ['ピッピ', 'Clefairy'],
+  ['エーフィ', 'Espeon'],
+  ['エーフィV', 'Espeon V'],
+  ['エーフィVMAX', 'Espeon VMAX'],
+  ['ガラルファイヤーV', 'Galarian Moltres V'],
+  ['ガラルファイヤーVMAX', 'Galarian Moltres VMAX'],
+  ['ガラルサンダーV', 'Galarian Zapdos V'],
+  ['ガラルフリーザーV', 'Galarian Articuno V'],
+  ['ゼイユ', 'Carmine'],
+  ['メイのはげまし', "May's Encouragement"],
+  ['ピカチュウ(マスターボールミラー)', 'Pikachu (Master Ball Mirror)'],
+  ['ピカチュウ（マスターボールミラー）', 'Pikachu (Master Ball Mirror)'],
+  ['ヒロシマのピカチュウ', "Pikachu (Hiroshima Promo)"],
+  ['トウホクのピカチュウ', "Pikachu (Tohoku Promo)"],
+  ['フクオカのピカチュウ', "Pikachu (Fukuoka Promo)"],
+  ['ポケモンカード151', 'Pokémon Card 151'],
+  ['ポケモンカードゲーム Classic', 'Pokémon Card Game Classic'],
+  ['25th ANNIVERSARY COLLECTION', '25th Anniversary Collection'],
+]);
+
+for (const [key, value] of [...NAME_EXACT_OVERRIDES.entries()]) {
+  NAME_EXACT_OVERRIDES.set(normalizeNameKey(key), value);
+}
+
+function stripBracketSuffix(text) {
+  return String(text || '').replace(/\s*\[[^\]]+\]\s*$/, '').trim();
+}
+
+function extractCardNumber(text) {
+  const match = String(text || '').match(/\[([^\]]+)\]\s*$/);
+  return match ? match[1].trim() : '';
+}
+
+function normalizeSpaces(text) {
+  return String(text || '').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeNameKey(text) {
+  return normalizeSpaces(text)
+    .replace(/[（）()\[\]【】'"’‘`・\-_.]/g, '')
+    .replace(/\s+/g, '')
+    .toLowerCase();
+}
+
+function replaceKnownNameParts(text) {
+  let out = String(text || '');
+  for (const [jp, en] of NAME_REPLACEMENTS) {
+    out = out.split(jp).join(en);
+  }
+  return out;
+}
+
+function kanaToRomaji(text) {
+  const input = String(text || '');
+  const pairs = {
+    キャ: 'kya', キュ: 'kyu', キョ: 'kyo',
+    シャ: 'sha', シュ: 'shu', ショ: 'sho',
+    チャ: 'cha', チュ: 'chu', チョ: 'cho',
+    ニャ: 'nya', ニュ: 'nyu', ニョ: 'nyo',
+    ヒャ: 'hya', ヒュ: 'hyu', ヒョ: 'hyo',
+    ミャ: 'mya', ミュ: 'myu', ミョ: 'myo',
+    リャ: 'rya', リュ: 'ryu', リョ: 'ryo',
+    ギャ: 'gya', ギュ: 'gyu', ギョ: 'gyo',
+    ジャ: 'ja', ジュ: 'ju', ジョ: 'jo',
+    ビャ: 'bya', ビュ: 'byu', ビョ: 'byo',
+    ピャ: 'pya', ピュ: 'pyu', ピョ: 'pyo',
+    ファ: 'fa', フィ: 'fi', フェ: 'fe', フォ: 'fo',
+    ティ: 'ti', ディ: 'di', トゥ: 'tu', ドゥ: 'du',
+    ウィ: 'wi', ウェ: 'we', ウォ: 'wo',
+  };
+  const single = {
+    ア: 'a', イ: 'i', ウ: 'u', エ: 'e', オ: 'o',
+    カ: 'ka', キ: 'ki', ク: 'ku', ケ: 'ke', コ: 'ko',
+    サ: 'sa', シ: 'shi', ス: 'su', セ: 'se', ソ: 'so',
+    タ: 'ta', チ: 'chi', ツ: 'tsu', テ: 'te', ト: 'to',
+    ナ: 'na', ニ: 'ni', ヌ: 'nu', ネ: 'ne', ノ: 'no',
+    ハ: 'ha', ヒ: 'hi', フ: 'fu', ヘ: 'he', ホ: 'ho',
+    マ: 'ma', ミ: 'mi', ム: 'mu', メ: 'me', モ: 'mo',
+    ヤ: 'ya', ユ: 'yu', ヨ: 'yo',
+    ラ: 'ra', リ: 'ri', ル: 'ru', レ: 're', ロ: 'ro',
+    ワ: 'wa', ヲ: 'o', ン: 'n',
+    ガ: 'ga', ギ: 'gi', グ: 'gu', ゲ: 'ge', ゴ: 'go',
+    ザ: 'za', ジ: 'ji', ズ: 'zu', ゼ: 'ze', ゾ: 'zo',
+    ダ: 'da', ヂ: 'ji', ヅ: 'zu', デ: 'de', ド: 'do',
+    バ: 'ba', ビ: 'bi', ブ: 'bu', ベ: 'be', ボ: 'bo',
+    パ: 'pa', ピ: 'pi', プ: 'pu', ペ: 'pe', ポ: 'po',
+    ヴァ: 'va', ヴィ: 'vi', ヴェ: 've', ヴォ: 'vo',
+    ー: '-',
+  };
+  let out = '';
+  let geminate = false;
+  for (let i = 0; i < input.length; i += 1) {
+    const ch = input[i];
+    const next2 = input.slice(i, i + 2);
+    const next3 = input.slice(i, i + 3);
+    if (ch === 'ッ') {
+      geminate = true;
+      continue;
+    }
+    if (pairs[next2]) {
+      let roman = pairs[next2];
+      if (geminate) roman = roman[0] + roman;
+      out += roman;
+      geminate = false;
+      i += 1;
+      continue;
+    }
+    if (single[next3]) {
+      let roman = single[next3];
+      if (geminate) roman = roman[0] + roman;
+      out += roman;
+      geminate = false;
+      i += 2;
+      continue;
+    }
+    if (single[next2]) {
+      let roman = single[next2];
+      if (geminate) roman = roman[0] + roman;
+      out += roman;
+      geminate = false;
+      i += 1;
+      continue;
+    }
+    const kana = single[ch];
+    if (kana) {
+      let roman = kana;
+      if (geminate && roman) roman = roman[0] + roman;
+      out += roman;
+      geminate = false;
+      continue;
+    }
+    const code = ch.charCodeAt(0);
+    if (code >= 0x3041 && code <= 0x3096) {
+      const katakana = String.fromCharCode(code + 0x60);
+      const roman = single[katakana] || ch;
+      out += roman;
+      geminate = false;
+      continue;
+    }
+    if (/[A-Za-z0-9]/.test(ch)) {
+      out += ch;
+      geminate = false;
+      continue;
+    }
+    if (ch === '・' || ch === '－' || ch === 'ー') {
+      out += ' ';
+      geminate = false;
+      continue;
+    }
+    out += ch;
+  }
+  return normalizeSpaces(out.replace(/\s+/g, ' '));
+}
+
+function toEnglishPack(pack) {
+  return PACK_ENGLISH_MAP[String(pack || '').trim()] || String(pack || '').trim();
+}
+
+function toEnglishName(name) {
+  const stripped = stripBracketSuffix(name);
+  const exact = NAME_EXACT_OVERRIDES.get(stripped)
+    || NAME_EXACT_OVERRIDES.get(normalizeSpaces(stripped))
+    || NAME_EXACT_OVERRIDES.get(normalizeNameKey(stripped));
+  if (exact) return exact;
+  const replaced = replaceKnownNameParts(stripped);
+  const romanized = kanaToRomaji(replaced);
+  const spaced = romanized
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([a-z]+)no\s+([A-Z])/g, '$1 no $2')
+    .replace(/([A-Za-z])ex\b/g, '$1 ex')
+    .replace(/([A-Za-z])GX\b/g, '$1 GX')
+    .replace(/([A-Za-z])VMAX\b/g, '$1 VMAX')
+    .replace(/([A-Za-z])VSTAR\b/g, '$1 VSTAR')
+    .replace(/\s+/g, ' ');
+  const cleaned = normalizeSpaces(spaced)
+    .replace(/\bNo\b/g, 'no')
+    .replace(/\bEx\b/g, 'ex')
+    .replace(/\bVmax\b/g, 'VMAX')
+    .replace(/\bVstar\b/g, 'VSTAR');
+  return cleaned
+    .split(' ')
+    .map((word) => {
+      if (!word) return word;
+      if (word.toLowerCase() === 'no') return 'no';
+      if (word.toLowerCase() === 'ex') return 'ex';
+      if (/^(gx|vmax|vstar|sv|sm|s|m|wcs\d+|p)$/i.test(word)) return word.toUpperCase();
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}
+
+function buildTcgplayerCandidate(name, pack, cardNumber) {
+  const englishPack = toEnglishPack(pack);
+  const englishName = toEnglishName(name);
+  const terms = [englishPack, englishName, cardNumber].filter(Boolean).join(' ');
+  const hasEnoughInfo = Boolean(englishPack && englishName && cardNumber);
+  const status = hasEnoughInfo ? '自動候補' : '情報未取得';
+  return {
+    englishPack,
+    englishName,
+    cardNumber,
+    status,
+    query: terms,
+    url: hasEnoughInfo
+      ? `https://www.tcgplayer.com/search/pokemon-japan/product?productLineName=pokemon-japan&view=grid&q=${encodeURIComponent(terms)}`
+      : '',
+  };
+}
+
 function extractShopPrices(shops) {
   const inStock = shops.filter((x) => Number(x.stock) > 0);
   const pool = inStock.length ? inStock : shops;
@@ -398,6 +689,11 @@ async function main() {
     const tradeCount = shopInfo.tradeCount;
     const psa9Resolved = resolvePsa9Price(psa9Raw, snkrdunkA, shopPrice);
     const psa9 = psa9Resolved.value;
+    const tcgCandidate = buildTcgplayerCandidate(
+      item.strName,
+      (item.arrayCategories && item.arrayCategories[0]) || '',
+      extractCardNumber(item.strName),
+    );
 
     const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
     let grd = [];
@@ -474,6 +770,13 @@ async function main() {
       '5k仕入れ上限': String(capPrice(psa10, psa9, FEE_5K, SETTINGS.targetProfitRate5k) ?? ''),
       'URL': `https://pokeca-chart.com/gr/${item.strSlug}/`,
       '画像URL': String(item.strImgUrl || item.img || ''),
+      '英語名候補': tcgCandidate.englishName,
+      '英語カード名': tcgCandidate.englishName,
+      '英語収録': tcgCandidate.englishPack,
+      'カード番号': tcgCandidate.cardNumber,
+      'TCGplayer取得状態': tcgCandidate.status,
+      'TCGplayer候補': tcgCandidate.query,
+      'TCGplayer候補URL': tcgCandidate.url,
       '__shop_price': String(shopPrice ?? ''),
       '__snkrdunkA': String(snkrdunkA ?? ''),
       'おすすめの仕入れ値': String(recom ?? ''),
