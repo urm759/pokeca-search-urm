@@ -249,7 +249,7 @@
     const buyable = isBuyable(row, shopPrice);
     const psa10 = num(row['PSA10売値']);
     const psa9 = num(row['PSA9売値']);
-    const tcgDirectUrl = row['TCGplayer直リンク'] || '';
+    const tcgResolvedUrl = String(row['TCGplayer直リンク'] || row['TCGplayer候補URL'] || '').trim();
     const tcgCandidateUrl = row['TCGplayer候補URL'] || '';
     const tcgStatus = row['TCGplayer取得状態'] || '';
     const rowClass = [
@@ -297,6 +297,10 @@
           <div class="kv"><span class="k">13kROI</span><span class="v">${pct(row['13kROI'])}</span></div>
           <div class="kv"><span class="k">5kROI</span><span class="v">${pct(row['5kROI'])}</span></div>
           <div class="kv"><span class="k">取引件数</span><span class="v">${nf.format(num(row['取引件数']))}</span></div>
+          <div class="kv"><span class="k">TCG海外USD</span><span class="v">${row['TCGplayer市場価格USD'] ? `$${num(row['TCGplayer市場価格USD']).toFixed(2)}` : '-'}</span></div>
+          <div class="kv"><span class="k">TCG海外円換算</span><span class="v">${yen(row['TCGplayer市場価格JPY'])}</span></div>
+          <div class="kv"><span class="k">海外乖離率</span><span class="v">${pct(row['海外乖離率'])}</span></div>
+          <div class="kv"><span class="k">海外評価</span><span class="v">${escapeHtml(row['海外評価'] || '-')}</span></div>
           <div class="kv"><span class="k">2か月見立て</span><span class="v">${escapeHtml(row['2か月見立て'] || '-')}</span></div>
           <div class="kv"><span class="k">平均比</span><span class="v">${escapeHtml(avgSignal(row))}</span></div>
           <div class="kv"><span class="k">流動性</span><span class="v">${escapeHtml(row['流動性'] || '-')}</span></div>
@@ -310,11 +314,12 @@
             ${badge(`利益率 ${pct(row['利益率'])}`, 'b-info')}
             ${badge(`PSA10枚数 ${nf.format(num(row['PSA10枚数']))}`, 'b-info')}
             ${badge(`平均比 ${avgSignal(row)}`, 'b-info')}
+            ${badge(`海外 ${row['海外評価'] || '-'}`, row['海外評価'] === '海外割安' ? 'b-good' : row['海外評価'] === '海外割高' ? 'b-bad' : 'b-info')}
             ${badge(`PSA可否 ${row['PSA可否'] || row['PSA判断'] || '-'}`, toneFor(row['PSA可否'] || row['PSA判断']))}
-            ${badge(`TCGplayer ${tcgStatus || '-'}`, tcgStatus === '自動候補' ? 'b-good' : tcgStatus === '情報未取得' ? 'b-warn' : 'b-info')}
+            ${badge(`TCGplayer ${tcgStatus || '-'}`, /自動|手動/.test(tcgStatus) ? 'b-good' : tcgStatus === '情報未取得' ? 'b-warn' : 'b-info')}
           </div>
-          ${tcgDirectUrl
-            ? `<a class="link" href="${escapeHtml(tcgDirectUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer商品</a>`
+          ${tcgResolvedUrl
+            ? `<a class="link" href="${escapeHtml(tcgResolvedUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer商品</a>`
             : tcgCandidateUrl
               ? `<a class="link" href="${escapeHtml(tcgCandidateUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer候補</a>`
               : `<span class="muted">TCGplayer情報未取得</span>`}
@@ -363,7 +368,8 @@
   els.list.addEventListener('change', (evt) => {
     const input = evt.target.closest('input[data-store-price]');
     if (!input) return;
-    const row = rows.find((r) => String(r['URL'] || '') === String(input.dataset.url || ''));
+    const url = String(input.dataset.url || '');
+    const row = rows.find((r) => String(r['URL'] || '') === url);
     if (!row) return;
     saveManualStorePrice(row, input.value);
     render();
@@ -385,7 +391,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=20260711').catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=20260716-3').catch(() => {});
     });
   }
 
