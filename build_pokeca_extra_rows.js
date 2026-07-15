@@ -17,6 +17,7 @@ const FEE_13K = Number(SETTINGS.fee13k) || 13000;
 const FEE_5K = Number(SETTINGS.fee5k) || 5000;
 const TARGETS = new Set(process.argv.slice(2));
 const snkrdunkAAvgCache = new Map();
+const tcgplayerMatchCache = new Map();
 
 function loadSettings() {
   try {
@@ -547,6 +548,112 @@ function buildTcgplayerCandidate(name, pack, cardNumber) {
   };
 }
 
+function normalizeMatchText(text) {
+  return String(text || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9/]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeCardNumber(text) {
+  return String(text || '')
+    .toUpperCase()
+    .replace(/\s+/g, '')
+    .replace(/[^0-9A-Z/]/g, '');
+}
+
+async function fetchTcgplayerMatch({ englishName, englishPack, cardNumber }) {
+  const key = [normalizeMatchText(englishPack), normalizeMatchText(englishName), normalizeCardNumber(cardNumber)].join('|');
+  if (tcgplayerMatchCache.has(key)) return tcgplayerMatchCache.get(key);
+
+  const query = [englishPack, englishName, cardNumber].filter(Boolean).join(' ').trim();
+  if (!query) {
+    const empty = { status: '情報未取得', productId: '', directUrl: '', searchUrl: '' };
+    tcgplayerMatchCache.set(key, empty);
+    return empty;
+  }
+
+  const searchUrl = `https://www.tcgplayer.com/search/pokemon-japan/product?productLineName=pokemon-japan&view=grid&q=${encodeURIComponent(query)}`;
+  const body = {
+    size: 10,
+    from: 0,
+    algorithm: 'sales_dismax',
+    context: {},
+    filters: {
+      exclude: { rarityName: ['Code Card', 'Common', 'Uncommon'], cardType: ['Land'] },
+      range: { marketPrice: { gte: 10 } },
+      term: { productLineName: ['pokemon-japan'] },
+    },
+    sessionId: key || 'tcgplayer-match',
+  };
+  if (normalizeMatchText(englishPack)) {
+    body.filters.term.setName = [englishPack];
+  }
+
+  try {
+    const res = await fetch(`https://mp-search-api.tcgplayer.com/v1/search/request?q=${encodeURIComponent(query)}&isList=true`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36',
+        accept: 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) throw new Error(`tcgplayer ${res.status}`);
+    const json = await res.json();
+    const products = Array.isArray(json?.results?.[0]?.results) ? json.results[0].results : [];
+    const targetNumber = normalizeCardNumber(cardNumber);
+    const targetName = normalizeMatchText(englishName);
+    const targetPack = normalizeMatchText(englishPack);
+
+    let best = null;
+    let bestScore = -1;
+    for (const product of products) {
+      const pNumber = normalizeCardNumber(product?.customAttributes?.number || '');
+      const pName = normalizeMatchText(product?.productName || '');
+      const pSet = normalizeMatchText(product?.setName || '');
+      const pLine = normalizeMatchText(product?.productLineName || '');
+      let score = 0;
+      if (targetNumber && pNumber === targetNumber) score += 120;
+      else if (targetNumber && (pNumber.includes(targetNumber) || targetNumber.includes(pNumber))) score += 80;
+      if (targetPack && pSet === targetPack) score += 35;
+      else if (targetPack && (pSet.includes(targetPack) || targetPack.includes(pSet))) score += 18;
+      if (targetName && pName.includes(targetName.split(' ')[0] || targetName)) score += 20;
+      if (pLine.includes('pokemon japan')) score += 5;
+      if ((product?.marketPrice ?? 0) > 0) score += 1;
+      if (score > bestScore) {
+        bestScore = score;
+        best = product;
+      }
+    }
+
+    if (!best || bestScore < 80) {
+      const notFound = { status: '情報未取得', productId: '', directUrl: '', searchUrl };
+      tcgplayerMatchCache.set(key, notFound);
+      return notFound;
+    }
+
+    const productId = String(best.productId || '');
+    const directUrl = productId ? `https://www.tcgplayer.com/product/${productId}` : '';
+    const result = {
+      status: '自動確定',
+      productId,
+      directUrl,
+      searchUrl,
+    };
+    tcgplayerMatchCache.set(key, result);
+    return result;
+  } catch (_) {
+    const failed = { status: '情報未取得', productId: '', directUrl: '', searchUrl };
+    tcgplayerMatchCache.set(key, failed);
+    return failed;
+  }
+}
+
 function extractShopPrices(shops) {
   const inStock = shops.filter((x) => Number(x.stock) > 0);
   const pool = inStock.length ? inStock : shops;
@@ -694,6 +801,11 @@ async function main() {
       (item.arrayCategories && item.arrayCategories[0]) || '',
       extractCardNumber(item.strName),
     );
+    const tcgMatch = await fetchTcgplayerMatch({
+      englishName: tcgCandidate.englishName,
+      englishPack: tcgCandidate.englishPack,
+      cardNumber: tcgCandidate.cardNumber,
+    });
 
     const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
     let grd = [];
@@ -774,9 +886,11 @@ async function main() {
       '英語カード名': tcgCandidate.englishName,
       '英語収録': tcgCandidate.englishPack,
       'カード番号': tcgCandidate.cardNumber,
-      'TCGplayer取得状態': tcgCandidate.status,
+      'TCGplayer取得状態': tcgMatch.status,
+      'TCGplayer商品ID': tcgMatch.productId,
+      'TCGplayer直リンク': tcgMatch.directUrl,
       'TCGplayer候補': tcgCandidate.query,
-      'TCGplayer候補URL': tcgCandidate.url,
+      'TCGplayer候補URL': tcgMatch.directUrl || tcgCandidate.url,
       '__shop_price': String(shopPrice ?? ''),
       '__snkrdunkA': String(snkrdunkA ?? ''),
       'おすすめの仕入れ値': String(recom ?? ''),
