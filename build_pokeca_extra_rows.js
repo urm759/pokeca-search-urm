@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SETTINGS_PATH = path.join(__dirname, 'pricing_settings.json');
+const TCGPLAYER_OVERRIDE_PATH = path.join(__dirname, 'tcgplayer_overrides.json');
 const DEFAULT_SETTINGS = {
   fee13k: 13000,
   fee5k: 5000,
@@ -18,6 +19,7 @@ const FEE_5K = Number(SETTINGS.fee5k) || 5000;
 const TARGETS = new Set(process.argv.slice(2));
 const snkrdunkAAvgCache = new Map();
 const tcgplayerMatchCache = new Map();
+const tcgplayerOverrideMap = loadTcgplayerOverrides();
 
 function loadSettings() {
   try {
@@ -26,6 +28,33 @@ function loadSettings() {
   } catch (_) {
     return { ...DEFAULT_SETTINGS };
   }
+}
+
+function loadTcgplayerOverrides() {
+  try {
+    const raw = fs.readFileSync(TCGPLAYER_OVERRIDE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).map(([key, value]) => [normalizeOverrideKey(key), value]),
+    );
+  } catch (_) {
+    return {};
+  }
+}
+
+function normalizeOverrideKey(value) {
+  return String(value || '')
+    .trim()
+    .replace(/\/+$/, '');
+}
+
+function resolveTcgplayerOverride(url) {
+  const key = normalizeOverrideKey(url);
+  const legacyKey = key.includes('pokeca-chart.com/gr/')
+    ? normalizeOverrideKey(key.replace('https://pokeca-chart.com/gr/', 'https://toreca-souba.com/cards/'))
+    : '';
+  return tcgplayerOverrideMap[key] || (legacyKey ? tcgplayerOverrideMap[legacyKey] : null) || null;
 }
 
 function pad(n) {
@@ -806,6 +835,15 @@ async function main() {
       englishPack: tcgCandidate.englishPack,
       cardNumber: tcgCandidate.cardNumber,
     });
+    const tcgOverride = resolveTcgplayerOverride(`https://pokeca-chart.com/gr/${item.strSlug}/`);
+    const tcgResolved = tcgOverride
+      ? {
+          status: '手動固定',
+          productId: String(tcgOverride.productId || '').trim(),
+          directUrl: String(tcgOverride.directUrl || '').trim() || (String(tcgOverride.productId || '').trim() ? `https://www.tcgplayer.com/product/${String(tcgOverride.productId || '').trim()}` : ''),
+          searchUrl: String(tcgOverride.searchUrl || '').trim(),
+        }
+      : tcgMatch;
 
     const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
     let grd = [];
@@ -886,11 +924,12 @@ async function main() {
       '英語カード名': tcgCandidate.englishName,
       '英語収録': tcgCandidate.englishPack,
       'カード番号': tcgCandidate.cardNumber,
-      'TCGplayer取得状態': tcgMatch.status,
-      'TCGplayer商品ID': tcgMatch.productId,
-      'TCGplayer直リンク': tcgMatch.directUrl,
+      'TCGplayer取得状態': tcgResolved.status,
+      'TCGplayer商品ID': tcgResolved.productId,
+      'TCGplayer直リンク': tcgResolved.directUrl,
       'TCGplayer候補': tcgCandidate.query,
       'TCGplayer候補URL': tcgMatch.directUrl || tcgCandidate.url,
+      'TCGplayer手動固定': tcgOverride ? '1' : '',
       '__shop_price': String(shopPrice ?? ''),
       '__snkrdunkA': String(snkrdunkA ?? ''),
       'おすすめの仕入れ値': String(recom ?? ''),
