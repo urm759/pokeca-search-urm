@@ -246,6 +246,20 @@ function capPrice(psa10, psa9, fee, minProfitRate) {
   return round100(upper);
 }
 
+function marketQueryName(name) {
+  return String(name || '').replace(/\s*\[[^\]]+\]\s*$/, '').trim();
+}
+
+function buildMarketUrls(name) {
+  const query = marketQueryName(name);
+  const q = encodeURIComponent(`${query} pokemon japan`);
+  const t = encodeURIComponent(query);
+  return {
+    ebayUrl: `https://www.ebay.com/sch/i.html?_nkw=${q}&_sacat=0`,
+    tcgplayerUrl: `https://www.tcgplayer.com/search/pokemon-japan/product?productLineName=pokemon-japan&view=grid&q=${t}`,
+  };
+}
+
 function resolvePsa9Price(psa9Raw, snkrdunkA, shopPrice) {
   const raw = n(psa9Raw) ?? 0;
   if (raw > 0) return { value: Math.round(raw), source: '実値' };
@@ -398,6 +412,7 @@ async function main() {
     const tradeCount = shopInfo.tradeCount;
     const psa9Resolved = resolvePsa9Price(psa9Raw, snkrdunkA, shopPrice);
     const psa9 = psa9Resolved.value;
+    const marketUrls = buildMarketUrls(item.strName);
 
     const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
     let grd = [];
@@ -474,6 +489,8 @@ async function main() {
       '5k仕入れ上限': String(capPrice(psa10, psa9, FEE_5K, SETTINGS.targetProfitRate5k) ?? ''),
       'URL': `https://pokeca-chart.com/gr/${item.strSlug}/`,
       '画像URL': String(item.strImgUrl || item.img || ''),
+      'eBayURL': marketUrls.ebayUrl,
+      'TCGplayerURL': marketUrls.tcgplayerUrl,
       '__shop_price': String(shopPrice ?? ''),
       '__snkrdunkA': String(snkrdunkA ?? ''),
       'おすすめの仕入れ値': String(recom ?? ''),
