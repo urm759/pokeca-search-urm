@@ -9,5 +9,6 @@
   "https://pokeca-chart.com/gr/s4-114-100/": { "productId": "568940" },
   "https://pokeca-chart.com/gr/140-s-p/": { "productId": "597339" },
   "https://pokeca-chart.com/gr/381-s-p/": { "productId": "598458" },
-  "https://pokeca-chart.com/gr/098-sv-p/": { "productId": "587856" }
+  "https://pokeca-chart.com/gr/098-sv-p/": { "productId": "587856", "marketPriceUsd": 250.25 },
+  "https://pokeca-chart.com/gr/mc-764-742/": { "productId": "670141" }
 }

@@ -864,7 +864,7 @@ async function main() {
           productId: String(tcgOverride.productId || '').trim(),
           directUrl: String(tcgOverride.directUrl || '').trim() || (String(tcgOverride.productId || '').trim() ? `https://www.tcgplayer.com/product/${String(tcgOverride.productId || '').trim()}` : ''),
           searchUrl: String(tcgOverride.searchUrl || '').trim(),
-          marketPriceUsd: tcgMatch.marketPriceUsd || 0,
+          marketPriceUsd: Number(tcgOverride.marketPriceUsd || tcgMatch.marketPriceUsd || 0) || 0,
         }
       : tcgMatch;
     const usdJpyRate = await fetchUsdJpyRate();
@@ -963,7 +963,7 @@ async function main() {
       'TCGplayer商品ID': tcgResolved.productId,
       'TCGplayer直リンク': tcgResolved.directUrl,
       'TCGplayer候補': tcgCandidate.query,
-      'TCGplayer候補URL': tcgMatch.directUrl || tcgCandidate.url,
+      'TCGplayer候補URL': tcgOverride ? tcgResolved.directUrl : (tcgMatch.directUrl || tcgCandidate.url),
       'TCGplayer手動固定': tcgOverride ? '1' : '',
       '__shop_price': String(shopPrice ?? ''),
       '__snkrdunkA': String(snkrdunkA ?? ''),
