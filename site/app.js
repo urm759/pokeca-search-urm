@@ -249,6 +249,7 @@
     const buyable = isBuyable(row, shopPrice);
     const psa10 = num(row['PSA10売値']);
     const psa9 = num(row['PSA9売値']);
+    const tcgDirectUrl = row['TCGplayer直リンク'] || '';
     const tcgCandidateUrl = row['TCGplayer候補URL'] || '';
     const tcgStatus = row['TCGplayer取得状態'] || '';
     const rowClass = [
@@ -312,9 +313,11 @@
             ${badge(`PSA可否 ${row['PSA可否'] || row['PSA判断'] || '-'}`, toneFor(row['PSA可否'] || row['PSA判断']))}
             ${badge(`TCGplayer ${tcgStatus || '-'}`, tcgStatus === '自動候補' ? 'b-good' : tcgStatus === '情報未取得' ? 'b-warn' : 'b-info')}
           </div>
-          ${tcgCandidateUrl
-            ? `<a class="link" href="${escapeHtml(tcgCandidateUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer候補</a>`
-            : `<span class="muted">TCGplayer情報未取得</span>`}
+          ${tcgDirectUrl
+            ? `<a class="link" href="${escapeHtml(tcgDirectUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer商品</a>`
+            : tcgCandidateUrl
+              ? `<a class="link" href="${escapeHtml(tcgCandidateUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer候補</a>`
+              : `<span class="muted">TCGplayer情報未取得</span>`}
           <a class="link" href="${escapeHtml(row['URL'] || '#')}" target="_blank" rel="noopener noreferrer">開く</a>
         </div>
       </article>
