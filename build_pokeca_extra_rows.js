@@ -20,6 +20,7 @@ const TARGETS = new Set(process.argv.slice(2));
 const snkrdunkAAvgCache = new Map();
 const tcgplayerMatchCache = new Map();
 const tcgplayerOverrideMap = loadTcgplayerOverrides();
+let usdJpyRateCache = null;
 
 function loadSettings() {
   try {
@@ -122,6 +123,21 @@ async function fetchText(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   return res.text();
+}
+
+async function fetchUsdJpyRate() {
+  if (Number.isFinite(usdJpyRateCache) && usdJpyRateCache > 0) return usdJpyRateCache;
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    if (!res.ok) throw new Error(`fx ${res.status}`);
+    const json = await res.json();
+    const rate = Number(json?.rates?.JPY);
+    if (Number.isFinite(rate) && rate > 0) {
+      usdJpyRateCache = rate;
+      return rate;
+    }
+  } catch (_) {}
+  return null;
 }
 
 function extractProductCatalogId(html) {
@@ -661,7 +677,7 @@ async function fetchTcgplayerMatch({ englishName, englishPack, cardNumber }) {
     }
 
     if (!best || bestScore < 80) {
-      const notFound = { status: '情報未取得', productId: '', directUrl: '', searchUrl };
+      const notFound = { status: '情報未取得', productId: '', directUrl: '', searchUrl, marketPriceUsd: 0 };
       tcgplayerMatchCache.set(key, notFound);
       return notFound;
     }
@@ -673,11 +689,12 @@ async function fetchTcgplayerMatch({ englishName, englishPack, cardNumber }) {
       productId,
       directUrl,
       searchUrl,
+      marketPriceUsd: Number(best.marketPrice || 0) || 0,
     };
     tcgplayerMatchCache.set(key, result);
     return result;
   } catch (_) {
-    const failed = { status: '情報未取得', productId: '', directUrl: '', searchUrl };
+    const failed = { status: '情報未取得', productId: '', directUrl: '', searchUrl, marketPriceUsd: 0 };
     tcgplayerMatchCache.set(key, failed);
     return failed;
   }
@@ -737,7 +754,7 @@ function normalizeShopPrice(raw, current, avg) {
   return Math.round(shop);
 }
 
-function scoreRow({ roi13, roi5, trend, liquidity, psaTotal, psaRate, current, avg, shop, recom, psaEval }) {
+function scoreRow({ roi13, roi5, trend, liquidity, psaTotal, psaRate, current, avg, shop, recom, psaEval, foreignSignal }) {
   let score = 0;
   if (roi13 >= 30) score += 3;
   else if (roi13 >= 15) score += 2;
@@ -751,6 +768,8 @@ function scoreRow({ roi13, roi5, trend, liquidity, psaTotal, psaRate, current, a
   if ((n(psaRate) ?? 0) >= 80) score += 1;
   if ((n(current) ?? 0) < (n(avg) ?? 0)) score += 1;
   if ((n(shop) ?? 0) < (n(recom) ?? 0)) score += 1;
+  if (foreignSignal === '海外割安') score += 1;
+  if (foreignSignal === '海外割高') score -= 1;
   if (psaEval === '見送り') score -= 4;
   return score;
 }
@@ -761,7 +780,7 @@ function overall(score) {
   return '見送り';
 }
 
-function noteText(overallEval, storeEval, psaEval, trend, liquidity, lock, score) {
+function noteText(overallEval, storeEval, psaEval, trend, liquidity, lock, score, foreignSignal) {
   const parts = [];
   if (overallEval === '買い') parts.push('総合は仕入れ候補');
   else if (overallEval === '条件付き') parts.push('総合は条件付き');
@@ -777,6 +796,9 @@ function noteText(overallEval, storeEval, psaEval, trend, liquidity, lock, score
   else if (trend === '横ばい') parts.push('2か月見立ては横ばい');
   else if (trend === '上昇強い') parts.push('2か月見立ては強い');
   else parts.push('2か月見立ては下落注意');
+
+  if (foreignSignal === '海外割安') parts.push('海外価格より日本が割安');
+  else if (foreignSignal === '海外割高') parts.push('海外価格より日本が割高');
 
   if (score >= 6) parts.push('PSA鑑定数は薄めで値動き荒め');
   else if (score >= 4) parts.push('PSA鑑定数は標準的');
@@ -842,8 +864,16 @@ async function main() {
           productId: String(tcgOverride.productId || '').trim(),
           directUrl: String(tcgOverride.directUrl || '').trim() || (String(tcgOverride.productId || '').trim() ? `https://www.tcgplayer.com/product/${String(tcgOverride.productId || '').trim()}` : ''),
           searchUrl: String(tcgOverride.searchUrl || '').trim(),
+          marketPriceUsd: tcgMatch.marketPriceUsd || 0,
         }
       : tcgMatch;
+    const usdJpyRate = await fetchUsdJpyRate();
+    const tcgUsd = n(tcgResolved.marketPriceUsd) ?? 0;
+    const tcgJpy = tcgUsd && usdJpyRate ? Math.round(tcgUsd * usdJpyRate) : 0;
+    const foreignGapRate = current > 0 && tcgJpy > 0 ? ((tcgJpy - current) / current) * 100 : 0;
+    const foreignSignal = tcgJpy && current
+      ? (foreignGapRate >= 15 ? '海外割安' : foreignGapRate <= -15 ? '海外割高' : '中立')
+      : '';
 
     const grdText = await fetchText(`https://api.pokeca-chart.com/php/get.php?function=get_item_grd_info&item_id=${item.nItemId}`);
     let grd = [];
@@ -882,6 +912,7 @@ async function main() {
       shop: shopPrice,
       recom,
       psaEval,
+      foreignSignal,
     });
 
     const totalEval = psaEval === '見送り' ? '見送り' : overall(score);
@@ -889,7 +920,7 @@ async function main() {
 
     out.push({
       '総合評価': totalEval,
-      '備考': noteText(totalEval, storeDecision, psaEval, trend, liq, lock, score),
+      '備考': noteText(totalEval, storeDecision, psaEval, trend, liq, lock, score, foreignSignal),
       '現在相場': fmtInt(current),
       '平均相場': fmtInt(avg),
       'SNKRDUNK_A': fmtInt(snkrdunkA),
@@ -916,6 +947,10 @@ async function main() {
       '取引件数': String(tradeCount),
       '総合点': String(score),
       '資金ロック': lock,
+      'TCGplayer市場価格USD': fmtNum(tcgUsd, 2),
+      'TCGplayer市場価格JPY': fmtInt(tcgJpy),
+      '海外乖離率': fmtNum(foreignGapRate, 1),
+      '海外評価': foreignSignal || '',
       '13k仕入れ上限': String(upper13k ?? ''),
       '5k仕入れ上限': String(capPrice(psa10, psa9, FEE_5K, SETTINGS.targetProfitRate5k) ?? ''),
       'URL': `https://pokeca-chart.com/gr/${item.strSlug}/`,
