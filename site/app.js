@@ -249,6 +249,8 @@
     const buyable = isBuyable(row, shopPrice);
     const psa10 = num(row['PSA10売値']);
     const psa9 = num(row['PSA9売値']);
+    const tcgCandidateUrl = row['TCGplayer候補URL'] || '';
+    const tcgStatus = row['TCGplayer取得状態'] || '';
     const rowClass = [
       'row',
       row['総合評価'] === '買い' ? 'row-good' : row['総合評価'] === '条件付き' ? 'row-warn' : 'row-bad',
@@ -260,12 +262,13 @@
         <div class="row-head">
           <div class="name-block">
             ${imageUrl ? `<img class="card-art" src="${escapeHtml(imageUrl)}" alt="" loading="lazy" decoding="async" />` : ''}
-            <div class="name-copy">
-              <div class="name">${escapeHtml(displayName(row['カード']))}</div>
-              <div class="pack">${escapeHtml(row['収録パック'] || '')}</div>
-              <div class="pack">${escapeHtml(derivedRarity(row) || '')}</div>
-            </div>
+          <div class="name-copy">
+            <div class="name">${escapeHtml(displayName(row['カード']))}</div>
+            <div class="pack">${escapeHtml(row['収録パック'] || '')}</div>
+            <div class="pack">${escapeHtml(derivedRarity(row) || '')}</div>
+            ${row['英語名候補'] ? `<div class="pack">英語名候補: ${escapeHtml(row['英語名候補'])}</div>` : ''}
           </div>
+        </div>
           <div class="row-badges">
             ${badge(`PSA可否 ${psaLabel(row) || '-'}`, toneFor(psaLabel(row)))}
             ${badge(`店頭可否 ${storeLabel(row) || '-'}`, toneFor(storeLabel(row)))}
@@ -307,7 +310,11 @@
             ${badge(`PSA10枚数 ${nf.format(num(row['PSA10枚数']))}`, 'b-info')}
             ${badge(`平均比 ${avgSignal(row)}`, 'b-info')}
             ${badge(`PSA可否 ${row['PSA可否'] || row['PSA判断'] || '-'}`, toneFor(row['PSA可否'] || row['PSA判断']))}
+            ${badge(`TCGplayer ${tcgStatus || '-'}`, tcgStatus === '自動候補' ? 'b-good' : tcgStatus === '情報未取得' ? 'b-warn' : 'b-info')}
           </div>
+          ${tcgCandidateUrl
+            ? `<a class="link" href="${escapeHtml(tcgCandidateUrl)}" target="_blank" rel="noopener noreferrer">TCGplayer候補</a>`
+            : `<span class="muted">TCGplayer情報未取得</span>`}
           <a class="link" href="${escapeHtml(row['URL'] || '#')}" target="_blank" rel="noopener noreferrer">開く</a>
         </div>
       </article>
