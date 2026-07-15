@@ -288,6 +288,15 @@
           </div>
         </div>
 
+        <div class="compare-grid">
+          <div class="kv"><span class="k">現在相場</span><span class="v">${yen(row['現在相場'])}</span></div>
+          <div class="kv"><span class="k">平均相場</span><span class="v">${yen(row['平均相場'])}</span></div>
+          <div class="kv"><span class="k">TCG海外USD</span><span class="v">${row['TCGplayer市場価格USD'] ? `$${num(row['TCGplayer市場価格USD']).toFixed(2)}` : '-'}</span></div>
+          <div class="kv"><span class="k">TCG海外円換算</span><span class="v">${yen(row['TCGplayer市場価格JPY'])}</span></div>
+          <div class="kv"><span class="k">海外乖離率</span><span class="v">${pct(row['海外乖離率'])}</span></div>
+          <div class="kv"><span class="k">海外評価</span><span class="v">${escapeHtml(row['海外評価'] || '-')}</span></div>
+        </div>
+
         <div class="meta-grid">
           <div class="kv"><span class="k">PSA10売値</span><span class="v">${yen(psa10)}</span></div>
           <div class="kv"><span class="k">PSA9売値</span><span class="v">${yen(psa9)}</span></div>
@@ -297,10 +306,6 @@
           <div class="kv"><span class="k">13kROI</span><span class="v">${pct(row['13kROI'])}</span></div>
           <div class="kv"><span class="k">5kROI</span><span class="v">${pct(row['5kROI'])}</span></div>
           <div class="kv"><span class="k">取引件数</span><span class="v">${nf.format(num(row['取引件数']))}</span></div>
-          <div class="kv"><span class="k">TCG海外USD</span><span class="v">${row['TCGplayer市場価格USD'] ? `$${num(row['TCGplayer市場価格USD']).toFixed(2)}` : '-'}</span></div>
-          <div class="kv"><span class="k">TCG海外円換算</span><span class="v">${yen(row['TCGplayer市場価格JPY'])}</span></div>
-          <div class="kv"><span class="k">海外乖離率</span><span class="v">${pct(row['海外乖離率'])}</span></div>
-          <div class="kv"><span class="k">海外評価</span><span class="v">${escapeHtml(row['海外評価'] || '-')}</span></div>
           <div class="kv"><span class="k">2か月見立て</span><span class="v">${escapeHtml(row['2か月見立て'] || '-')}</span></div>
           <div class="kv"><span class="k">平均比</span><span class="v">${escapeHtml(avgSignal(row))}</span></div>
           <div class="kv"><span class="k">流動性</span><span class="v">${escapeHtml(row['流動性'] || '-')}</span></div>
@@ -391,7 +396,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=20260716-3').catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=20260716-4').catch(() => {});
     });
   }
 

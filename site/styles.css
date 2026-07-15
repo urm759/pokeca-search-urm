@@ -347,11 +347,16 @@ select:focus {
   text-align: right;
 }
 
+.compare-grid,
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(120px, 1fr));
   gap: 10px;
   margin-top: 12px;
+}
+
+.compare-grid {
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
 }
 
 .kv {
@@ -438,6 +443,9 @@ select:focus {
   .meta-grid {
     grid-template-columns: repeat(2, minmax(120px, 1fr));
   }
+  .compare-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -479,6 +487,9 @@ select:focus {
     height: 106px;
   }
   .meta-grid {
+    grid-template-columns: 1fr;
+  }
+  .compare-grid {
     grid-template-columns: 1fr;
   }
   .results-head {
