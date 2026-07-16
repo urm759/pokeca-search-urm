@@ -322,6 +322,18 @@ select:focus {
   color: var(--accent);
 }
 
+.price-value.foreign.good {
+  color: var(--good);
+}
+
+.price-value.foreign.neutral {
+  color: var(--text);
+}
+
+.price-value.foreign.bad {
+  color: var(--bad);
+}
+
 .price-state {
   margin-top: 4px;
   font-size: 12px;

@@ -60,6 +60,21 @@
     return `${num(v).toFixed(1).replace(/\.0$/, '')}%`;
   }
 
+  function signedPct(v) {
+    if (v === null || v === undefined || v === '') return '-';
+    const n = num(v);
+    const text = `${Math.abs(n).toFixed(1).replace(/\.0$/, '')}%`;
+    return n > 0 ? `+${text}` : n < 0 ? `-${text}` : '0%';
+  }
+
+  function foreignTone(v) {
+    const n = num(v);
+    if (!Number.isFinite(n)) return 'neutral';
+    if (n >= 10) return 'good';
+    if (n <= -10) return 'bad';
+    return 'neutral';
+  }
+
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -282,6 +297,12 @@
             <div class="price-value">${yen(row['平均相場'])}</div>
             <div class="price-label">おすすめの仕入れ値</div>
             <div class="price-value accent">${yen(row['おすすめの仕入れ値'])}</div>
+            <div class="price-label">海外乖離率</div>
+            <div class="price-value foreign ${foreignTone(row['海外乖離率'])}">${signedPct(row['海外乖離率'])}</div>
+            <div class="price-label">海外円換算</div>
+            <div class="price-value">${yen(row['TCGplayer市場価格JPY'])}</div>
+            <div class="price-label">おすすめ差</div>
+            <div class="price-value">${yen(num(row['TCGplayer市場価格JPY']) - num(row['おすすめの仕入れ値']))}</div>
             <div class="price-label">店頭価格</div>
             <input class="store-price-input" data-store-price data-url="${escapeHtml(row['URL'] || '')}" type="number" inputmode="numeric" placeholder="未入力" value="${manualShopPrice ?? ''}" />
             <div class="price-state ${buyable ? 'ok' : 'ng'}">${buyable ? '仕入れ可' : '慎重'}</div>
@@ -291,9 +312,6 @@
         <div class="compare-grid">
           <div class="kv"><span class="k">現在相場</span><span class="v">${yen(row['現在相場'])}</span></div>
           <div class="kv"><span class="k">平均相場</span><span class="v">${yen(row['平均相場'])}</span></div>
-          <div class="kv"><span class="k">TCG海外USD</span><span class="v">${row['TCGplayer市場価格USD'] ? `$${num(row['TCGplayer市場価格USD']).toFixed(2)}` : '-'}</span></div>
-          <div class="kv"><span class="k">TCG海外円換算</span><span class="v">${yen(row['TCGplayer市場価格JPY'])}</span></div>
-          <div class="kv"><span class="k">海外乖離率</span><span class="v">${pct(row['海外乖離率'])}</span></div>
           <div class="kv"><span class="k">海外評価</span><span class="v">${escapeHtml(row['海外評価'] || '-')}</span></div>
         </div>
 
@@ -396,7 +414,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=20260716-4').catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=20260716-6').catch(() => {});
     });
   }
 
