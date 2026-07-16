@@ -291,7 +291,7 @@
             ${badge(`総合評価 ${row['総合評価'] || '-'}`, toneFor(row['総合評価']))}
           </div>
           <div class="price-stack">
-            <div class="price-label">現在相場</div>
+            <div class="price-label">市場価格</div>
             <div class="price-value">${yen(row['現在相場'])}</div>
             <div class="price-label">平均相場</div>
             <div class="price-value">${yen(row['平均相場'])}</div>
@@ -310,7 +310,7 @@
         </div>
 
         <div class="compare-grid">
-          <div class="kv"><span class="k">現在相場</span><span class="v">${yen(row['現在相場'])}</span></div>
+          <div class="kv"><span class="k">市場価格</span><span class="v">${yen(row['現在相場'])}</span></div>
           <div class="kv"><span class="k">平均相場</span><span class="v">${yen(row['平均相場'])}</span></div>
           <div class="kv"><span class="k">海外評価</span><span class="v">${escapeHtml(row['海外評価'] || '-')}</span></div>
         </div>
@@ -398,6 +398,16 @@
     render();
   });
 
+  els.list.addEventListener('input', (evt) => {
+    const input = evt.target.closest('input[data-store-price]');
+    if (!input) return;
+    const url = String(input.dataset.url || '');
+    const row = rows.find((r) => String(r['URL'] || '') === url);
+    if (!row) return;
+    saveManualStorePrice(row, input.value);
+    render();
+  });
+
   document.querySelectorAll('[data-term]').forEach((btn) => {
     btn.addEventListener('click', () => {
       els.search.value = btn.dataset.term || '';
@@ -414,7 +424,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=20260716-6').catch(() => {});
+      navigator.serviceWorker.register('./sw.js?v=20260716-8').catch(() => {});
     });
   }
 
